@@ -36,7 +36,7 @@ Same as the previous section, except replace `require('elegant-react')` with `re
 
 Add the script:
 
-    //rawgit.com/gilbox/elegant-react/master/build/global/elegant-react.min.js
+    //rawgit.com/gilbox/elegant-react/master/build/global/elegant-react.js
     
 This exposes the global object `ElegantReact`.
 
