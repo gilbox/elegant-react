@@ -19,7 +19,7 @@
     "prepush": "npm run examples-build"
   },
   "authors": [
-    "Gil Birman"
+    "Gil Birman <birmangil@gmail.com> (http://gilbox.me/)"
   ],
   "license": "MIT",
   "devDependencies": {
@@ -28,10 +28,10 @@
     "babel-loader": "^5.1.4",
     "immutable": "^3.7.3",
     "node-libs-browser": "^0.5.2",
+    "react": "0.13.x",
     "webpack": "^1.9.11"
   },
   "peerDependencies": {
-    "react": "0.13.x"
   },
   "dependencies": {},
   "tags": [
