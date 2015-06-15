@@ -1,0 +1,45 @@
+{
+  "name": "elegant-react",
+  "version": "0.0.1",
+  "description": "Elegant Functional Architecture for React",
+  "main": "src",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gilbox/elegant-react.git"
+  },
+  "homepage": "https://github.com/gilbox/elegant-react/blob/latest/README.md",
+  "bugs": "https://github.com/gilbox/elegant-react/issues",
+  "scripts": {
+    "build-global": "rm -rf build/global && NODE_ENV=production webpack src/index.js build/global/elegant-react.js && NODE_ENV=production COMPRESS=1 webpack src/index.js build/global/elegant-react.min.js && echo \"gzipped, the global build is `gzip -c build/global/elegant-react.min.js | wc -c` bytes\"",
+    "build-npm": "rm -rf build/npm && babel -d build/npm/lib ./src && cp README.md build/npm && find -X build/npm/lib -type d -name __tests__ | xargs rm -rf && node -p 'p=require(\"./package-npm\");JSON.stringify(p,null,2)' > build/npm/package.json",
+    "examples": "rm -rf examples/js && webpack-dev-server --config examples/webpack.config.js --content-base examples",
+    "examples-build": "rm -rf examples/js && webpack --config examples/webpack.build.config.js",
+    "test": "jsxhint . && karma start",
+    "publish": "npm publish ./build/npm",
+    "prepush": "npm run examples-build"
+  },
+  "authors": [
+    "Gil Birman"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "babel": "^5.5.8",
+    "babel-core": "^5.5.8",
+    "babel-loader": "^5.1.4",
+    "immutable": "^3.7.3",
+    "node-libs-browser": "^0.5.2",
+    "webpack": "^1.9.11"
+  },
+  "peerDependencies": {
+    "react": "0.13.x"
+  },
+  "dependencies": {},
+  "tags": [
+    "react",
+    "functional"
+  ],
+  "keywords": [
+    "react",
+    "react-component"
+  ]
+}
