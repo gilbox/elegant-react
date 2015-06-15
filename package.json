@@ -36,10 +36,12 @@
   "dependencies": {},
   "tags": [
     "react",
+    "react-native",
     "functional"
   ],
   "keywords": [
     "react",
+    "react-native",
     "react-component"
   ]
 }
