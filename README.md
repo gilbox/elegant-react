@@ -78,3 +78,4 @@ Clone this repo, then:
 ## credit
 
 This project is essentially a simplified version of [omniscient](http://omniscientjs.github.io/)
+and promotes the functional approach of [browser.html](https://github.com/mozilla/browser.html/)
