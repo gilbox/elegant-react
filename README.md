@@ -73,6 +73,7 @@ Clone this repo, then:
 - omniscient supports cursors
 - omniscient is battle-tested
 - omniscient is unit-tested
+- omniscient is ~18kb minified. elegant-react is <3kb minified.
 
 
 ## credit
