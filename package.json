@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/gilbox/elegant-react.git"
   },
-  "homepage": "https://github.com/gilbox/elegant-react/blob/latest/README.md",
+  "homepage": "https://github.com/gilbox/elegant-react",
   "bugs": "https://github.com/gilbox/elegant-react/issues",
   "scripts": {
     "build-global": "rm -rf build/global && NODE_ENV=production webpack src/index.js build/global/elegant-react.js && NODE_ENV=production COMPRESS=1 webpack src/index.js build/global/elegant-react.min.js && echo \"gzipped, the global build is `gzip -c build/global/elegant-react.min.js | wc -c` bytes\"",
