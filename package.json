@@ -1,6 +1,6 @@
 {
   "name": "elegant-react",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Elegant Functional Architecture for React",
   "main": "src",
   "repository": {
@@ -31,8 +31,7 @@
     "react": "0.13.x",
     "webpack": "^1.9.11"
   },
-  "peerDependencies": {
-  },
+  "peerDependencies": {},
   "dependencies": {},
   "tags": [
     "react",
