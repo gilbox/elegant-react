@@ -1,6 +1,8 @@
 const React = require('react');
 const {component, subedit} = require('elegant-react')({debug: true});
 const {fromJS} = require('immutable');
+const flyd = require('flyd');
+const {stream} = flyd;
 
 const newBlankEntry = _ => fromJS({name: '', phone: ''});
 
@@ -142,10 +144,24 @@ const App = component(function App ({data, historyLength}, {edit, undo}) {
   );
 });
 
-const whenNot = (value, fn) => !value && fn;
-const equal = (a, b) => a === b;
-const not = v => !v;
-const last = arr => arr[arr.length - 1];
+
+// pushes onto the stream only when
+// data at (optional) sub-path changes
+const createHistoryStream = (s, history, ...path) => {
+  const s2 = stream();
+  const last = arr => arr[arr.length - 1];
+
+  flyd.on(data => {
+    const nextValue = data.getIn(path);
+    if (last(history) !== nextValue) {
+      s2(nextValue);
+    }
+  }, s);
+
+  return s2;
+};
+
+window.stream = stream;
 
 // the Renderer component manages the top-level app state.
 // it also handles the undo history which takes a snapshot of
@@ -153,23 +169,21 @@ const last = arr => arr[arr.length - 1];
 const rendererMixin = {
   history: [],
   getInitialState() {
-    this.prevEntries = this.props.data.get('entries');
-    this.history = [];
+    this.historyStream = stream();
+    this.entriesHistoryStream = createHistoryStream(this.historyStream, this.history, 'entries');
+
+    flyd.on(entries => this.history.push(entries), this.entriesHistoryStream);
 
     return {data:this.props.data}
   },
   undo() {
     const lastEntries = this.history.pop();
     this.setState({data: this.state.data.set('entries', lastEntries) });
-    this.prevEntries = lastEntries;
   },
   edit (transform) {
+    this.historyStream(this.state.data);
     const newData = transform(this.state.data);
     this.setState({data: newData});
-
-    const entries = newData.get('entries');
-    if (entries !== this.prevEntries) this.history.push(this.prevEntries);
-    this.prevEntries = entries;
   }
 };
 const Renderer = component(rendererMixin, function Renderer() {
