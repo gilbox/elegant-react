@@ -152,9 +152,8 @@ const filterStream = (predicate, s) =>
 
 const last = arr => arr[arr.length - 1];
 
-const createSubStream = (dataStream, ...path) => {
-  return flyd.map(data => data.getIn(path), dataStream);
-};
+const subStream = (dataStream, ...path) =>
+  flyd.map(data => data.getIn(path), dataStream);
 
 const createHistoryStore = (historyStream, undoStream, outputStream, outputCountStream) => {
   const history = [];
@@ -187,7 +186,7 @@ const rendererMixin = {
     const {wiredStream} = this;
 
     createHistoryStore(
-      createSubStream(this.historyStream, 'entries'),
+      subStream(this.historyStream, 'entries'),
       this.entriesUndoActionStream,
       wiredStream('entries'),
       wiredStream('entriesHistoryCount')
@@ -212,3 +211,4 @@ const Renderer = component(rendererMixin, function Renderer() {
 });
 
 React.render(<Renderer data={initialState} />, document.getElementById('example'));
+
