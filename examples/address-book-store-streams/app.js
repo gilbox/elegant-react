@@ -6,8 +6,9 @@ const {stream} = flyd;
 
 const newBlankEntry = _ => fromJS({name: '', phone: ''});
 
-const data = fromJS({
+const initialState = fromJS({
   newEntry: newBlankEntry(),
+  entriesHistoryCount: 0,
   entries: [
     { name: 'aria', phone: '3332221111'},
     { name: 'gilbox', phone: '6665552222'},
@@ -155,44 +156,45 @@ const createSubStream = (dataStream, ...path) => {
   return flyd.map(data => data.getIn(path), dataStream);
 };
 
-const createHistoryStoreStream = (historyStream, undoStream, history) => {
-  const outputStream = stream();
-  const filteredHistoryStream = filterStream(data => last(history) !== data, historyStream);
+const createHistoryStoreStream = (historyStream, undoStream, outputStream, outputCountStream) => {
+  const history = [];
+  const filteredHistoryStream =
+    filterStream(data => last(history) !== data, historyStream);
 
-  flyd.on(entries => history.push(entries), filteredHistoryStream); // <-- mutation
+  flyd.on(entries => outputCountStream(history.push(entries)), filteredHistoryStream);
 
-  flyd.on(undo =>
-      outputStream(historyStream().update(state => history.pop())) // <-- mutation
-  , undoStream);
-
-  return outputStream;
+  flyd.on(undo => {
+      outputStream(history.pop());
+      outputCountStream(history.length);
+  }, undoStream);
 };
 
 // the Renderer component manages the top-level app state.
 // it also handles the undo history which takes a snapshot of
 // the entire application state every time the 'entries' change
 const rendererMixin = {
-  history: [],
-  connectStoreStream(s, ...path) {
+  wireStream(...path) {
+    const s = stream();
     flyd.on(data => this.setState({
       data: this.state.data.updateIn(path, state => data)
     }), s);
+    return s;
   },
   getInitialState() {
     this.historyStream = stream();
+    const {wireStream} = this;
 
-    this.connectStoreStream(
-      createHistoryStoreStream(
-        createSubStream(this.historyStream, 'entries'),
-        this.entriesUndoStream = stream(),
-        this.entriesHistory = []
-      )
-    , 'entries');
+    createHistoryStoreStream(
+      createSubStream(this.historyStream, 'entries'),
+      this.entriesUndoActionStream = stream(),
+      wireStream('entries'),
+      wireStream('entriesHistoryCount')
+    );
 
     return {data:this.props.data}
   },
   undo() {
-    this.entriesUndoStream(true);
+    this.entriesUndoActionStream(true);
   },
   edit (transform) {
     this.historyStream(this.state.data);
@@ -201,10 +203,11 @@ const rendererMixin = {
   }
 };
 const Renderer = component(rendererMixin, function Renderer() {
+  const {data} = this.state;
   return <App
-    data={this.state.data}
-    historyLength={this.entriesHistory.length}
+    data={data}
+    historyLength={data.get('entriesHistoryCount')}
     statics={{ edit: this.edit, undo: this.undo }} />
 });
 
-React.render(<Renderer data={data} />, document.getElementById('example'));
+React.render(<Renderer data={initialState} />, document.getElementById('example'));
