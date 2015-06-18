@@ -182,11 +182,13 @@ const rendererMixin = {
   },
   getInitialState() {
     this.historyStream = stream();
+    this.entriesUndoActionStream = stream();
+
     const {wireStream} = this;
 
     createHistoryStoreStream(
       createSubStream(this.historyStream, 'entries'),
-      this.entriesUndoActionStream = stream(),
+      this.entriesUndoActionStream,
       wireStream('entries'),
       wireStream('entriesHistoryCount')
     );
