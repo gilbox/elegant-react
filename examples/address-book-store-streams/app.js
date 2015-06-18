@@ -156,7 +156,7 @@ const createSubStream = (dataStream, ...path) => {
   return flyd.map(data => data.getIn(path), dataStream);
 };
 
-const createHistoryStoreStream = (historyStream, undoStream, outputStream, outputCountStream) => {
+const createHistoryStore = (historyStream, undoStream, outputStream, outputCountStream) => {
   const history = [];
   const filteredHistoryStream =
     filterStream(data => last(history) !== data, historyStream);
@@ -173,7 +173,7 @@ const createHistoryStoreStream = (historyStream, undoStream, outputStream, outpu
 // it also handles the undo history which takes a snapshot of
 // the entire application state every time the 'entries' change
 const rendererMixin = {
-  wireStream(...path) {
+  wiredStream(...path) {
     const s = stream();
     flyd.on(data => this.setState({
       data: this.state.data.updateIn(path, state => data)
@@ -184,13 +184,13 @@ const rendererMixin = {
     this.historyStream = stream();
     this.entriesUndoActionStream = stream();
 
-    const {wireStream} = this;
+    const {wiredStream} = this;
 
-    createHistoryStoreStream(
+    createHistoryStore(
       createSubStream(this.historyStream, 'entries'),
       this.entriesUndoActionStream,
-      wireStream('entries'),
-      wireStream('entriesHistoryCount')
+      wiredStream('entries'),
+      wiredStream('entriesHistoryCount')
     );
 
     return {data:this.props.data}
