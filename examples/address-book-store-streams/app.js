@@ -1,11 +1,14 @@
 const React = require('react');
 const {component, subedit} = require('elegant-react')({debug: true});
 const {fromJS} = require('immutable');
+const flyd = require('flyd');
+const {stream} = flyd;
 
 const newBlankEntry = _ => fromJS({name: '', phone: ''});
 
-const data = fromJS({
+const initialState = fromJS({
   newEntry: newBlankEntry(),
+  entriesHistoryCount: 0,
   entries: [
     { name: 'aria', phone: '3332221111'},
     { name: 'gilbox', phone: '6665552222'},
@@ -142,41 +145,70 @@ const App = component(function App ({data, historyLength}, {edit, undo}) {
   );
 });
 
-const whenNot = (value, fn) => !value && fn;
-const equal = (a, b) => a === b;
-const not = v => !v;
+const filterStream = (predicate, s) =>
+  flyd.stream([s], (self) => {
+    if (predicate(s())) self(s.val);
+  });
+
 const last = arr => arr[arr.length - 1];
+
+const subStream = (dataStream, ...path) =>
+  flyd.map(data => data.getIn(path), dataStream);
+
+const createHistoryStore = (historyStream, undoStream, outputStream, outputCountStream) => {
+  const history = [];
+  const filteredHistoryStream =
+    filterStream(data => last(history) !== data, historyStream);
+
+  flyd.on(entries => outputCountStream(history.push(entries)), filteredHistoryStream);
+
+  flyd.on(undo => {
+      outputStream(history.pop());
+      outputCountStream(history.length);
+  }, undoStream);
+};
 
 // the Renderer component manages the top-level app state.
 // it also handles the undo history which takes a snapshot of
 // the entire application state every time the 'entries' change
 const rendererMixin = {
-  history: [],
+  wiredStream(...path) {
+    const s = stream();
+    flyd.on(data => this.setState({
+      data: this.state.data.updateIn(path, state => data)
+    }), s);
+    return s;
+  },
   getInitialState() {
-    this.prevEntries = this.props.data.get('entries');
-    this.history = [];
+    this.historyStream = stream();
+    this.entriesUndoActionStream = stream();
+
+    const {wiredStream} = this;
+
+    createHistoryStore(
+      subStream(this.historyStream, 'entries'),
+      this.entriesUndoActionStream,
+      wiredStream('entries'),
+      wiredStream('entriesHistoryCount')
+    );
 
     return {data:this.props.data}
   },
   undo() {
-    const lastEntries = this.history.pop();
-    this.setState({data: this.state.data.set('entries', lastEntries) });
-    this.prevEntries = lastEntries;
+    this.entriesUndoActionStream(true);
   },
   edit (transform) {
-    const newData = transform(this.state.data);
-    this.setState({data: newData});
-
-    const entries = newData.get('entries');
-    if (entries !== this.prevEntries) this.history.push(this.prevEntries);
-    this.prevEntries = entries;
+    this.historyStream(this.state.data);
+    this.setState({ data: transform(this.state.data) });
   }
 };
 const Renderer = component(rendererMixin, function Renderer() {
+  const {data} = this.state;
   return <App
-    data={this.state.data}
-    historyLength={this.history.length}
+    data={data}
+    historyLength={data.get('entriesHistoryCount')}
     statics={{ edit: this.edit, undo: this.undo }} />
 });
 
-React.render(<Renderer data={data} />, document.getElementById('example'));
+React.render(<Renderer data={initialState} />, document.getElementById('example'));
+
