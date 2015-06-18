@@ -200,8 +200,7 @@ const rendererMixin = {
   },
   edit (transform) {
     this.historyStream(this.state.data);
-    const newData = transform(this.state.data);
-    this.setState({data: newData});
+    this.setState({ data: transform(this.state.data) });
   }
 };
 const Renderer = component(rendererMixin, function Renderer() {
