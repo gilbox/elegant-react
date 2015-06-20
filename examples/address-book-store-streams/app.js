@@ -9,6 +9,8 @@ const newBlankEntry = _ => fromJS({name: '', phone: ''});
 const initialState = fromJS({
   newEntry: newBlankEntry(),
   entriesHistoryCount: 0,
+  nameHistoryCount: 0,
+  phoneHistoryCount: 0,
   entries: [
     { name: 'aria', phone: '3332221111'},
     { name: 'gilbox', phone: '6665552222'},
@@ -34,9 +36,8 @@ const FormattedInput = component(function FormattedInput ({value, formatter, par
   return (
     <input {...this.props}
       value={formatter(value)}
-      onChange={event =>
-        edit(value => parser(event.target.value))
-        } />
+      onChange={ event =>
+        edit(value => parser(event.target.value)) } />
   )
 });
 
@@ -97,20 +98,30 @@ const handleEvent = handler => event => {
 };
 
 // Form for creating a new phone book entry
-const NewEntry = component(function NewEntry({data}, {edit, addNewEntry}) {
+const NewEntry = component(function NewEntry({data, nameHistoryCount, phoneHistoryCount}, {edit, addNewEntry, nameUndo, phoneUndo}) {
   return (
     <form className="NewEntry" onSubmit={handleEvent(addNewEntry)}>
       <div className="NewEntry-title">ADD NEW</div>
-      <NameInput
-        className="NewEntry-name"
-        value={data.get('name')}
-        statics={{
-          editName: subedit(edit, 'name') }} />
-      <PhoneInput
-        className="NewEntry-phone"
-        value={data.get('phone')}
-        statics={{
-          editPhone: subedit(edit, 'phone') }} />
+      <div className="InputWrap">
+        {nameHistoryCount ? <a href="#"
+          onClick={handleEvent(nameUndo)}
+          className="InputUndoBtn">⎌</a> : null}
+        <NameInput
+          className="NewEntry-name"
+          value={data.get('name')}
+          statics={{
+            editName: subedit(edit, 'name') }} />
+      </div>
+      <div className="InputWrap">
+        {phoneHistoryCount ? <a href="#"
+          onClick={handleEvent(phoneUndo)}
+          className="InputUndoBtn">⎌</a> : null}
+        <PhoneInput
+          className="NewEntry-phone"
+          value={data.get('phone')}
+          statics={{
+            editPhone: subedit(edit, 'phone') }} />
+      </div>
       <button style={{display: 'none'}} />
     </form>
   );
@@ -125,17 +136,21 @@ const pushNewEntry = edit =>
                    .sortBy(entry => entry.get('name')))
           .update('newEntry', newBlankEntry));
 
-const App = component(function App ({data, historyLength}, {edit, undo}) {
+const App = component(function App ({data, nameHistoryCount, phoneHistoryCount, entriesHistoryCount}, {edit, nameUndo, phoneUndo, entriesUndo}) {
   return (
     <div>
       <h1>Address Book Demo
-        {historyLength ? <a href="#"
-           onClick={handleEvent(undo)}
+        {data.get('entriesHistoryCount') ? <a href="#"
+           onClick={handleEvent(entriesUndo)}
            className="UndoBtn">⎌</a> : null}
       </h1>
       <NewEntry
+        nameHistoryCount={data.get('nameHistoryCount')}
+        phoneHistoryCount={data.get('phoneHistoryCount')}
         data={data.get('newEntry')}
         statics={{
+          nameUndo,
+          phoneUndo,
           edit: subedit(edit, 'newEntry'),
           addNewEntry: _=> pushNewEntry(edit) }} />
       <Entries
@@ -155,60 +170,103 @@ const last = arr => arr[arr.length - 1];
 const subStream = (dataStream, ...path) =>
   flyd.map(data => data.getIn(path), dataStream);
 
-const createHistoryStore = (historyStream, undoStream, outputStream, outputCountStream) => {
+const createHistoryStore = (previousStateStream, stateStream, undoStream, outputStream, outputCountStream) => {
   const history = [];
-  const filteredHistoryStream =
-    filterStream(data => last(history) !== data, historyStream);
-
-  flyd.on(entries => outputCountStream(history.push(entries)), filteredHistoryStream);
+  const filteredStateStream =
+    filterStream(state => state !== previousStateStream(), stateStream);
+  
+  flyd.on(state => {
+    outputCountStream(history.push(previousStateStream()))
+  }, filteredStateStream);
 
   flyd.on(undo => {
-      outputStream(history.pop());
-      outputCountStream(history.length);
+    outputStream(history.pop());
+    outputCountStream(history.length);
   }, undoStream);
+};
+
+const logstream = s => {
+  s = s || stream();
+  flyd.on(v => console.log('stream:', v.toJS ? v.toJS() : v), s);
+  return s;
 };
 
 // the Renderer component manages the top-level app state.
 // it also handles the undo history which takes a snapshot of
 // the entire application state every time the 'entries' change
 const rendererMixin = {
+  updateData(transform) {
+    // this is necessary because this.state.data is updated asynchronously
+    // while this.data is always up-to-date immediately
+    this.setState({
+      data: this.data = transform(this.data)
+    });
+  },
+
+  // returns a stream whose writes
+  // directly update application state
   wiredStream(...path) {
     const s = stream();
-    flyd.on(data => this.setState({
-      data: this.state.data.updateIn(path, state => data)
-    }), s);
+    flyd.on(newData => {
+      this.updateData(data => data.setIn(path, newData));
+    }, s);
     return s;
   },
+
   getInitialState() {
-    this.historyStream = stream();
+    return {data: this.data = this.props.initialState}
+  },
+
+  componentWillMount() {
+    // create our streams...
+
+    this.stateStream = stream();
+    this.previousStateStream = stream();
+    this.nameUndoActionStream = stream();
+    this.phoneUndoActionStream = stream();
     this.entriesUndoActionStream = stream();
+
+    // and connect the wires...
 
     const {wiredStream} = this;
 
     createHistoryStore(
-      subStream(this.historyStream, 'entries'),
+      subStream(this.previousStateStream, 'newEntry', 'name'),
+      subStream(this.stateStream, 'newEntry', 'name'),
+      this.nameUndoActionStream,
+      wiredStream('newEntry', 'name'),
+      wiredStream('nameHistoryCount'));
+
+    createHistoryStore(
+      subStream(this.previousStateStream, 'newEntry', 'phone'),
+      subStream(this.stateStream, 'newEntry', 'phone'),
+      this.phoneUndoActionStream,
+      wiredStream('newEntry', 'phone'),
+      wiredStream('phoneHistoryCount'));
+
+    createHistoryStore(
+      subStream(this.previousStateStream, 'entries'),
+      subStream(this.stateStream, 'entries'),
       this.entriesUndoActionStream,
       wiredStream('entries'),
-      wiredStream('entriesHistoryCount')
-    );
+      wiredStream('entriesHistoryCount'));
+  },
 
-    return {data:this.props.data}
-  },
-  undo() {
-    this.entriesUndoActionStream(true);
-  },
   edit (transform) {
-    this.historyStream(this.state.data);
-    this.setState({ data: transform(this.state.data) });
+    this.previousStateStream(this.data);
+    this.updateData(transform);
+    this.stateStream(this.data);
   }
 };
 const Renderer = component(rendererMixin, function Renderer() {
-  const {data} = this.state;
   return <App
-    data={data}
-    historyLength={data.get('entriesHistoryCount')}
-    statics={{ edit: this.edit, undo: this.undo }} />
+    data={this.state.data}
+    statics={{
+      edit: this.edit,
+      nameUndo: _=> this.nameUndoActionStream(1),
+      phoneUndo: _=> this.phoneUndoActionStream(1),
+      entriesUndo: _=> this.entriesUndoActionStream(1) }} />
 });
 
-React.render(<Renderer data={initialState} />, document.getElementById('example'));
+React.render(<Renderer initialState={initialState} />, document.getElementById('example'));
 
