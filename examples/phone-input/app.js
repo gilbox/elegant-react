@@ -2,7 +2,7 @@ const React = require('react');
 const {component, subedit} = require('elegant-react')({debug: true});
 const {fromJS} = require('immutable');
 
-const data = fromJS({
+const initialState = fromJS({
   phone: '6665552222'
 });
 
@@ -36,7 +36,7 @@ const App = component(function App ({data}, {edit}) {
 // the Renderer component manages the top-level app state
 const rendererMixin = {
   getInitialState() {
-    return {data:this.props.data}
+    return {data:this.props.initialState}
   },
   edit (transform) {
     this.setState({data: transform(this.state.data)})
@@ -49,4 +49,4 @@ const Renderer = component(rendererMixin, function Renderer() {
     statics={{ edit:this.edit }} />
 });
 
-React.render(<Renderer data={data} />, document.getElementById('example'));
+React.render(<Renderer initialState={initialState} />, document.getElementById('example'));
