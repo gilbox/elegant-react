@@ -4,11 +4,11 @@ import {componentWillMount, componentWillReceiveProps} from '../statics-mixin';
 const getDisplayName = (Component) =>
   Component.displayName || Component.name || 'Component';
 
-export default function createElegantDecorator(React) {
+export default function createElegantDecorator(React, debug) {
   const {Component} = React;
 
-  return DecoratedComponent => class ComponentDecorator extends Component {
-    static displayName = `Component(${getDisplayName(DecoratedComponent)})`;
+  return DecoratedComponent => class ElegantDecorator extends Component {
+    static displayName = `Elegant(${getDisplayName(DecoratedComponent)})`;
     static DecoratedComponent = DecoratedComponent;
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -24,6 +24,7 @@ export default function createElegantDecorator(React) {
     }
 
     render() {
+      if (debug) console.log(`render <${ElegantDecorator.displayName}>`);
       return (<DecoratedComponent {...this.props} />);
     }
   };

@@ -1,6 +1,6 @@
 const React = require('react');
 const {Component} = React;
-const {elegant, subedit} = require('elegant-react/classy');
+const {elegant, subedit} = require('elegant-react/classy')({debug: true});
 const {fromJS} = require('immutable');
 
 const initialState = fromJS({

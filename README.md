@@ -33,6 +33,10 @@ Require it:
 
     var {elegant, subedit} = require('elegant-react/classy');
 
+Or if you'd like to enable debug mode:
+
+    var {component} = require('elegant-react/classy')({debug: true});
+
 ## react-native support
 
 Same as the previous two sections, except replace:
