@@ -1,7 +1,7 @@
 # elegant-react
 
-Functional React Architecture based on [omniscient](http://omniscientjs.github.io/) and [browser.html](https://github.com/mozilla/browser.html/). 
-I've created this repo for use in my own projects. You're welcome to use it as well. 
+Functional React Architecture based on [omniscient](http://omniscientjs.github.io/) and [browser.html](https://github.com/mozilla/browser.html/).
+I've created this repo for use in my own projects. You're welcome to use it as well.
 Comments/suggestions/PRs are all welcome.
 If you are interested in something like
 this for a production application, consider using [omniscient](http://omniscientjs.github.io/) instead.
@@ -11,39 +11,47 @@ this for a production application, consider using [omniscient](http://omniscient
 
 See [this Medium article](https://medium.com/@gilbox/an-elegant-functional-architecture-for-react-faa3fb42b75b)
 
-
-## Using in your project
+## Installation
 
 Install via npm
 
     npm install elegant-react
-    
+
+## Using in your project (functional style)
+
 Require it:
 
-    var component = require('elegant-react').component;
-    
+    var {component} = require('elegant-react');
+
 Or if you'd like to enable debug mode:
 
-    var component = require('elegant-react')({debug: true}).component;
-    
-    
+    var {component} = require('elegant-react')({debug: true});
+
+## Using in your project (classical style)
+
+Require it:
+
+    var {elegant, subedit} = require('elegant-react/classy');
+
 ## react-native support
 
-Same as the previous section, except replace `require('elegant-react')` with `require('elegant-react/native')`
-    
-    
+Same as the previous two sections, except replace:
+
+- `require('elegant-react')` with `require('elegant-react/native')`
+- `require('elegant-react/classy')` with `require('elegant-react/classy/native')`
+
 ## Using in codepen, jsbin, etc.
 
 Add the script:
 
     //rawgit.com/gilbox/elegant-react/master/build/global/elegant-react.js
-    
+
 This exposes the global object `ElegantReact`.
 
 Now grab the component function:
 
     var component = ElegantReact.component;
-    
+
 Or if you'd like to enable `debug` mode:
 
     var component = ElegantReact({debug: true}).component;
@@ -62,7 +70,7 @@ Clone this repo, then:
 
     npm install
     npm run examples
-    
+
 ... and navigate to [http://localhost:8080/webpack-dev-server/](http://localhost:8080/webpack-dev-server/)
 
 
@@ -73,7 +81,7 @@ Clone this repo, then:
 - omniscient supports cursors
 - omniscient is battle-tested
 - omniscient is unit-tested
-- omniscient is ~18kb minified. elegant-react is <3kb minified.
+- omniscient is ~18kb minified. elegant-react is <3kb minified (or ~4kb for classical style).
 
 
 ## credit
