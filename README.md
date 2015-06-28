@@ -21,11 +21,11 @@ Install via npm
 
 Require it:
 
-    var {component} = require('elegant-react');
+    var {component, subedit} = require('elegant-react');
 
 Or if you'd like to enable debug mode:
 
-    var {component} = require('elegant-react')({debug: true});
+    var {component, subedit} = require('elegant-react')({debug: true});
 
 ## Using in your project (classical style)
 
@@ -35,7 +35,7 @@ Require it:
 
 Or if you'd like to enable debug mode:
 
-    var {component} = require('elegant-react/classy')({debug: true});
+    var {elegant, subedit} = require('elegant-react/classy')({debug: true});
 
 ## react-native support
 
