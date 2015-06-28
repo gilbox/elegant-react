@@ -59,7 +59,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
-	exports.subedit = subedit;
+	exports['default'] = setup;
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -70,10 +70,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _react = __webpack_require__(4);
 
 	var _react2 = _interopRequireDefault(_react);
-
-	var elegant = (0, _createElegantDecorator2['default'])(_react2['default']);
-
-	exports.elegant = elegant;
 
 	function subedit(edit) {
 	  for (var _len = arguments.length, path = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -86,6 +82,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	  };
 	}
+
+	function setup(debug) {
+	  return {
+	    subedit: subedit,
+	    elegant: (0, _createElegantDecorator2['default'])(_react2['default'], debug)
+	  };
+	}
+
+	setup.elegant = (0, _createElegantDecorator2['default'])(_react2['default']);
+	setup.subedit = subedit;
+	module.exports = exports['default'];
 
 /***/ },
 /* 1 */
@@ -115,20 +122,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return Component.displayName || Component.name || 'Component';
 	};
 
-	function createElegantDecorator(React) {
+	function createElegantDecorator(React, debug) {
 	  var Component = React.Component;
 
 	  return function (DecoratedComponent) {
 	    return (function (_Component) {
-	      function ComponentDecorator() {
-	        _classCallCheck(this, ComponentDecorator);
+	      function ElegantDecorator() {
+	        _classCallCheck(this, ElegantDecorator);
 
-	        _get(Object.getPrototypeOf(ComponentDecorator.prototype), 'constructor', this).apply(this, arguments);
+	        _get(Object.getPrototypeOf(ElegantDecorator.prototype), 'constructor', this).apply(this, arguments);
 	      }
 
-	      _inherits(ComponentDecorator, _Component);
+	      _inherits(ElegantDecorator, _Component);
 
-	      _createClass(ComponentDecorator, [{
+	      _createClass(ElegantDecorator, [{
 	        key: 'shouldComponentUpdate',
 	        value: function shouldComponentUpdate(nextProps, nextState) {
 	          return _componentRenderMixin.shouldComponentUpdate.call(this, nextProps, nextState);
@@ -146,11 +153,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }, {
 	        key: 'render',
 	        value: function render() {
+	          if (debug) console.log('render <' + ElegantDecorator.displayName + '>');
 	          return React.createElement(DecoratedComponent, this.props);
 	        }
 	      }], [{
 	        key: 'displayName',
-	        value: 'Component(' + getDisplayName(DecoratedComponent) + ')',
+	        value: 'Elegant(' + getDisplayName(DecoratedComponent) + ')',
 	        enumerable: true
 	      }, {
 	        key: 'DecoratedComponent',
@@ -158,7 +166,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        enumerable: true
 	      }]);
 
-	      return ComponentDecorator;
+	      return ElegantDecorator;
 	    })(Component);
 	  };
 	}
