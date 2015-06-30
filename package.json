@@ -28,7 +28,7 @@
     "babel": "^5.6.14",
     "babel-core": "^5.6.15",
     "babel-loader": "^5.2.2",
-    "flyd": "^0.1.12",
+    "flyd": "^0.1.14",
     "immutable": "^3.7.3",
     "node-libs-browser": "^0.5.2",
     "react": "0.13.x",
