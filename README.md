@@ -1,15 +1,14 @@
 # elegant-react
 
 Functional React Architecture based on [omniscient](http://omniscientjs.github.io/) and [browser.html](https://github.com/mozilla/browser.html/).
-I've created this repo for use in my own projects. You're welcome to use it as well.
 Comments/suggestions/PRs are all welcome.
-If you are interested in something like
+This is still experimental. If you are interested in something like
 this for a production application, consider using [omniscient](http://omniscientjs.github.io/) instead.
 
 
 ## about
 
-See [this Medium article](https://medium.com/@gilbox/an-elegant-functional-architecture-for-react-faa3fb42b75b)
+See [this Medium article](https://medium.com/@gilbox/an-elegant-functional-architecture-for-react-faa3fb42b75b) and [this one](https://medium.com/p/7acf5d0cf00e) as well
 
 ## Installation
 
