@@ -85,6 +85,7 @@ Clone this repo, then:
 - omniscient is battle-tested
 - omniscient is unit-tested
 - omniscient is ~18kb minified. elegant-react is <3kb minified (or ~4kb for classical style).
+- omniscient doesn't have the same idiomatic approach found in the `elegant-react/classy` package ([see this article](https://medium.com/p/7acf5d0cf00e) for more info)
 
 
 ## credit
