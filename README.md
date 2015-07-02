@@ -87,6 +87,15 @@ Clone this repo, then:
 - omniscient is ~18kb minified. elegant-react is <3kb minified (or ~4kb for classical style).
 - omniscient doesn't have the same idiomatic approach found in the `elegant-react/classy` package ([see this article](https://medium.com/p/7acf5d0cf00e) for more info)
 
+## live examples
+
+- [Phone Input](http://gilbox.github.io/elegant-react/examples/phone-input/demo.html)
+- [Phone Input (using classes)](http://gilbox.github.io/elegant-react/examples/phone-input-classy/demo.html)
+- [Address Book](http://gilbox.github.io/elegant-react/examples/address-book/demo.html)
+- [Address Book w/streams](http://gilbox.github.io/elegant-react/examples/address-book-streams/demo.html)
+- [Address Book w/"Store" streams](http://gilbox.github.io/elegant-react/examples/address-book-store-streams/demo.html)
+- [Address Book w/"Store" streams (using classes)](http://gilbox.github.io/elegant-react/examples/address-book-store-streams-classy/demo.html)
+- [Scroll Spring Animation](http://gilbox.github.io/elegant-react/examples/scroll-spring-animation/demo.html)
 
 ## credit
 
