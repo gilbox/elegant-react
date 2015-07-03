@@ -1,14 +1,17 @@
 # elegant-react
 
-Functional React Architecture based on [omniscient](http://omniscientjs.github.io/) and [browser.html](https://github.com/mozilla/browser.html/).
-Comments/suggestions/PRs are all welcome.
-This is still experimental. If you are interested in something like
-this for a production application, consider using [omniscient](http://omniscientjs.github.io/) instead.
+Functional React Architecture inspired by [omniscient](http://omniscientjs.github.io/) and [browser.html](https://github.com/mozilla/browser.html/).
+Comments/suggestions/PRs are all welcome. This is still experimental.
 
 
 ## about
 
-See [this Medium article](https://medium.com/@gilbox/an-elegant-functional-architecture-for-react-faa3fb42b75b) and [this one](https://medium.com/p/7acf5d0cf00e) as well
+This repo started off as a demonstration of some concepts that I wrote about in [this Medium article](https://medium.com/@gilbox/an-elegant-functional-architecture-for-react-faa3fb42b75b) and [this one](https://medium.com/p/7acf5d0cf00e) as well. However, since that time elegant-react
+has continued to evolve and things have changed significantly. For the purpose of education,
+you can check out the [elegant-react-og](https://github.com/gilbox/elegant-react) repo which
+is a copy of the elegant-react repo immediately before it began to diverge from the content
+in those two Medium articles.
+
 
 ## Installation
 
@@ -16,32 +19,28 @@ Install via npm
 
     npm install elegant-react
 
-## Using in your project (functional style)
+
+## Bringing it into your project
 
 Require it:
 
-    var {component, subedit} = require('elegant-react');
+    const {elegant, subedit} = require('elegant-react');
 
 Or if you'd like to enable debug mode:
 
-    var {component, subedit} = require('elegant-react')({debug: true});
+    const {elegant, subedit} = require('elegant-react')({debug: true});
 
-## Using in your project (classical style)
-
-Require it:
-
-    var {elegant, subedit} = require('elegant-react/classy');
-
-Or if you'd like to enable debug mode:
-
-    var {elegant, subedit} = require('elegant-react/classy')({debug: true});
 
 ## react-native support
 
-Same as the previous two sections, except replace:
+Require it:
 
-- `require('elegant-react')` with `require('elegant-react/native')`
-- `require('elegant-react/classy')` with `require('elegant-react/classy/native')`
+    const {elegant, subedit} = require('elegant-react/native');
+
+Or if you'd like to enable debug mode:
+
+    const {elegant, subedit} = require('elegant-react/native')({debug: true});
+
 
 ## Using in codepen, jsbin, etc.
 
@@ -51,13 +50,59 @@ Add the script:
 
 This exposes the global object `ElegantReact`.
 
-Now grab the component function:
-
-    var component = ElegantReact.component;
+    const {elegant, subedit} = ElegantReact;
 
 Or if you'd like to enable `debug` mode:
 
-    var component = ElegantReact({debug: true}).component;
+    const {elegant, subedit} = ElegantReact({debug: true});
+
+
+## Usage
+
+First, make sure you understand the `subedit` function described in
+[this Medium article](https://medium.com/@gilbox/an-elegant-functional-architecture-for-react-faa3fb42b75b)
+
+Then add the `@elegant` decorator to your component, specifying which
+props are static.
+
+    const inc = n => n + 1;
+
+    @elegant({statics: ['editValue']})
+    class Item extends Component {
+      render() {
+        const {item,editValue} = this.props;
+        const onClick = _ => editValue(inc);
+        return <li onClick={ onClick }>
+          { item.get('name') } - { item.get('value') }
+        </li>
+      }
+    }
+
+Now put that component to use:
+
+    const reverse = data => data.reverse();
+
+    @elegant({statics: ['edit']})
+    class Items extends Component {
+      render() {
+        const {items,edit} = this.props;
+
+        const children = items.toArray().map(
+          (item, index) =>
+            <Item key={item.get('name')}
+                  item={item}
+                  editValue={sub(edit, index,'value')} /> );
+
+        return  <div key="root">
+          <button onClick={_ => edit(reverse)}>reverse</button>
+          <ul>{ children }</ul>
+        </div>;
+      }
+    }
+
+The rest of the source for this demo is [here](https://github.com/gilbox/elegant-react/blob/master/examples/reorder-items/app.js)
+and you can [see it in action](http://gilbox.github.io/elegant-react/examples/reorder-items/demo.html)
+as well.
 
 
 ## dependencies
@@ -79,25 +124,28 @@ Clone this repo, then:
 
 ## differences from omniscient
 
-- omniscient will perform deep comparisons on props of any type with `lodash.isequal`.
+- elegant-react uses higher-order components where omniscient uses mixins
+- elegant-react components use a decorator to specify which props are static while
+  omniscient uses a single prop called `statics`.
+- omniscient will perform deep comparisons on props of any type with `lodash.isequal`,
+  elegant-react only performs shallow comparison assuming that if you need deep comparison
+  you will use immutable objects or define your own `shouldComponentUpdate`
+- elegant-react uses idiomatic react approach ([see this article](https://medium.com/p/7acf5d0cf00e) for more info)
 - omniscient supports components as function without JSX
 - omniscient supports cursors
 - omniscient is battle-tested
 - omniscient is unit-tested
-- omniscient is ~18kb minified. elegant-react is <3kb minified (or ~4kb for classical style).
-- omniscient doesn't have the same idiomatic approach found in the `elegant-react/classy` package ([see this article](https://medium.com/p/7acf5d0cf00e) for more info)
+- omniscient is ~18kb minified. elegant-react is ~4kb
 
 ## live examples
 
-- [Phone Input](http://gilbox.github.io/elegant-react/examples/phone-input/demo.html)
-- [Phone Input (using classes)](http://gilbox.github.io/elegant-react/examples/phone-input-classy/demo.html)
-- [Address Book](http://gilbox.github.io/elegant-react/examples/address-book/demo.html)
-- [Address Book w/streams](http://gilbox.github.io/elegant-react/examples/address-book-streams/demo.html)
+- [Phone Input](http://gilbox.github.io/elegant-react/examples/phone-input-field/demo.html)
 - [Address Book w/"Store" streams](http://gilbox.github.io/elegant-react/examples/address-book-store-streams/demo.html)
-- [Address Book w/"Store" streams (using classes)](http://gilbox.github.io/elegant-react/examples/address-book-store-streams-classy/demo.html)
 - [Scroll Spring Animation](http://gilbox.github.io/elegant-react/examples/scroll-spring-animation/demo.html)
+- [Reorder Items](http://gilbox.github.io/elegant-react/examples/reorder-items/demo.html)
 
 ## credit
 
-This project is essentially a simplified version of [omniscient](http://omniscientjs.github.io/)
-and promotes the functional approach of [browser.html](https://github.com/mozilla/browser.html/)
+This project was originally a simplified version of [omniscient](http://omniscientjs.github.io/)
+which promotes the functional approach of [browser.html](https://github.com/mozilla/browser.html/).
+However, it has since evolved to become a more unique thing of it's own (see *differences from omniscient* above)

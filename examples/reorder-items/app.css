@@ -1,0 +1,20 @@
+body {
+  font-family: Georgia;
+  padding: 50px;
+  margin: 0; }
+ul { padding: 0; }
+li, button {
+  border-radius: 3px;
+  border: 1px solid grey;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  cursor: pointer;
+  list-style: none;
+  text-align: center;
+  margin-bottom: 30px;
+
+  &:hover {
+    border: 1px solid blue;
+  }
+}

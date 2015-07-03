@@ -1,10 +1,19 @@
+// auto-selectable
+// isDirty
+// isInvalid
+// isDisabled
+
 const React = require('react');
 const {Component} = React;
-const {elegant, subedit} = require('elegant-react/classy')({debug: true});
+const {elegant, subedit} = require('elegant-react')({debug: true});
 const {fromJS} = require('immutable');
 
+const createValue = value => { value };
+
 const initialState = fromJS({
-  phone: '6665552222'
+  name: createValue('joe shmoe'),
+  phone: createValue('6665552222'),
+  age: createValue('')
 });
 
 const parsePhone = v => v.replace(/\D/g, '').substr(0,10);
@@ -14,7 +23,7 @@ const formatPhone = p =>
     .join('')
     .replace(/-+$/,'');
 
-@elegant
+@elegant({statics: ['editPhone']})
 class PhoneInput extends Component {
   render() {
     const {value} = this.props;
@@ -29,18 +38,34 @@ class PhoneInput extends Component {
   }
 }
 
-@elegant
+@elegant({statics: ['edit']})
+class Input extends Component {
+  render() {
+    const {value,edit} = this.props;
+
+    return (
+      <input
+        value={value}
+        onChange={event =>
+          edit(value => event.target.value) } />
+    )
+  }
+}
+
+@elegant({statics: ['edit']})
 class App extends Component {
   render() {
-    const {data} = this.props;
-    const {edit} = this.props.statics;
+    const {data,edit} = this.props;
 
     return  <div>
-      <h1>Phone Input Demo</h1>
+      <h1>Validation Demo</h1>
       <PhoneInput
-        value={data.get('phone')}
-        statics={{
-          editPhone: subedit(edit, 'phone') }} />
+        value={data.getIn(['phone','value'])}
+        editPhone={sub(edit,'phone','value')} />
+
+      <Input
+        value={data.getIn(['name','value'])}
+        edit={sub(edit,'name','value')} />
     </div>;
   }
 }
@@ -58,7 +83,7 @@ class Renderer extends Component {
   render() {
     return <App
       data={this.state.data}
-      statics={{ edit: ::this.edit }} />
+      edit={::this.edit} />
   }
 }
 
