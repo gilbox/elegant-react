@@ -59,8 +59,13 @@ Or if you'd like to enable `debug` mode:
 
 ## Usage
 
-Add the `@elegant` decorator to your component, specifying which
+First, make sure you understand the `subedit` function described in
+[this Medium article](https://medium.com/@gilbox/an-elegant-functional-architecture-for-react-faa3fb42b75b)
+
+Then add the `@elegant` decorator to your component, specifying which
 props are static.
+
+    const inc = n => n + 1;
 
     @elegant({statics: ['editValue']})
     class Item extends Component {
@@ -72,6 +77,33 @@ props are static.
         </li>
       }
     }
+
+Now put that component to use:
+
+    const reverse = data => data.reverse();
+
+    @elegant({statics: ['edit']})
+    class Items extends Component {
+      render() {
+        const {items,edit} = this.props;
+
+        const children = items.toArray().map(
+          (item, index) =>
+            <Item key={item.get('name')}
+                  item={item}
+                  editValue={sub(edit, index,'value')} /> );
+
+        return  <div key="root">
+          <button onClick={_ => edit(reverse)}>reverse</button>
+          <ul>{ children }</ul>
+        </div>;
+      }
+    }
+
+The rest of the source for this demo is [here](https://github.com/gilbox/elegant-react/blob/master/examples/reorder-items/app.js)
+and you can [see it in action](http://gilbox.github.io/elegant-react/examples/reorder-items/demo.html)
+as well.
+
 
 ## dependencies
 
@@ -110,6 +142,7 @@ Clone this repo, then:
 - [Phone Input](http://gilbox.github.io/elegant-react/examples/phone-input-field/demo.html)
 - [Address Book w/"Store" streams](http://gilbox.github.io/elegant-react/examples/address-book-store-streams/demo.html)
 - [Scroll Spring Animation](http://gilbox.github.io/elegant-react/examples/scroll-spring-animation/demo.html)
+- [Reorder Items](http://gilbox.github.io/elegant-react/examples/reorder-items/demo.html)
 
 ## credit
 
