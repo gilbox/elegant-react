@@ -30,6 +30,8 @@ Or if you'd like to enable debug mode:
 
     const {elegant, subedit} = require('elegant-react')({debug: true});
 
+Note: the `subedit` function is also available as `sub`. It's a personal
+preference which you use. I like the way that `sub(edit, 'foo')` reads.
 
 ## react-native support
 
@@ -59,7 +61,7 @@ Or if you'd like to enable `debug` mode:
 
 ## Usage
 
-First, make sure you understand the `subedit` function described in
+First, make sure you understand the `subedit` (aka `sub`) function described in
 [this Medium article](https://medium.com/@gilbox/an-elegant-functional-architecture-for-react-faa3fb42b75b)
 
 Then add the `@elegant` decorator to your component, specifying which
