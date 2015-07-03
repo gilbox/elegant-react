@@ -38,9 +38,11 @@ class App extends Component {
             <h2 style={styles.parallaxTitle}>
               Music is ❤
             </h2>
-            <img src="bg.jpg" width="100%"
+            <img src="bg.jpg" width="1920px"
               style={{
                 ...styles.parallaxImage,
+                width: '100%',
+                minWidth: '800px',
                 transform: translate3d(0,-offsetY/2-50,0) }} />
           </div>
         }</Spring>
