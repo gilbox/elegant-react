@@ -27,10 +27,7 @@ export default function createElegantDecorator(React, debug) {
 
         this.wrappedProps = wrapStatics(statics, this.props);
 
-        return (<DecoratedComponent {...this.wrappedProps} />);
-
-        // could be optimized with createElement
-        // return React.createElement(DecoratedComponent, this.wrappedProps, this.wrappedProps.children);
+        return React.createElement(DecoratedComponent, this.wrappedProps);
       }
     };
   }
