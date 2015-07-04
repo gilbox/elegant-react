@@ -1,7 +1,7 @@
 const React = require('react');
-const {Component} = React;
+const {Component, PropTypes} = React;
 const {elegant, sub} = require('elegant-react')({debug: true});
-const {fromJS} = require('immutable');
+const {fromJS, List, Map: IMap} = require('immutable');
 const flyd = require('flyd');
 const {stream} = flyd;
 
@@ -35,6 +35,12 @@ const formatPhone = p => p &&
 
 @elegant({statics: ['edit']})
 class FormattedInput extends Component {
+  static propTypes = {
+    edit: PropTypes.func.isRequired,
+    parser: PropTypes.func.isRequired,
+    formatter: PropTypes.func.isRequired,
+    value: PropTypes.string.isRequired
+  }
   render() {
     const {value, formatter, parser, edit} = this.props;
     return (
@@ -49,6 +55,10 @@ class FormattedInput extends Component {
 // input field that only allows 10 digits, and formats like XXX-XXX-XXXX
 @elegant({statics: ['editPhone']})
 class PhoneInput extends Component {
+  static propTypes = {
+    editPhone: PropTypes.func.isRequired,
+    value: PropTypes.string.isRequired
+  }
   render() {
     const {value, editPhone} = this.props;
 
@@ -66,6 +76,10 @@ class PhoneInput extends Component {
 // input field that disallows digits
 @elegant({statics: ['editName']})
 class NameInput extends Component {
+  static propTypes = {
+    editName: PropTypes.func.isRequired,
+    value: PropTypes.string.isRequired
+  }
   render() {
     const {value, editName} = this.props;
 
@@ -83,6 +97,10 @@ class NameInput extends Component {
 // a single phone book entry
 @elegant({statics: ['deleteEntry']})
 class Entry extends Component {
+  static propTypes = {
+    deleteEntry: PropTypes.func.isRequired,
+    entry: PropTypes.instanceOf(IMap).isRequired
+  }
   render() {
     const {entry, deleteEntry} = this.props;
 
@@ -99,6 +117,10 @@ class Entry extends Component {
 // grid of phone book entries
 @elegant({statics: ['editEntries']})
 class Entries extends Component {
+  static propTypes = {
+    editEntries: PropTypes.func.isRequired,
+    entries: PropTypes.instanceOf(List).isRequired
+  }
   render() {
     const {entries, editEntries} = this.props;
 
@@ -124,6 +146,15 @@ const handleEvent = handler => event => {
 // Form for creating a new phone book entry
 @elegant({statics: ['edit', 'addNewEntry', 'nameUndo', 'phoneUndo']})
 class NewEntry extends Component {
+  static propTypes = {
+    edit: PropTypes.func.isRequired,
+    addNewEntry: PropTypes.func.isRequired,
+    nameUndo: PropTypes.func.isRequired,
+    phoneUndo: PropTypes.func.isRequired,
+    data: PropTypes.instanceOf(IMap).isRequired,
+    nameHistoryCount: PropTypes.number.isRequired,
+    phoneHistoryCount: PropTypes.number.isRequired,
+  }
   render() {
     const {data, nameHistoryCount, phoneHistoryCount,
            edit, addNewEntry, nameUndo, phoneUndo} = this.props;
