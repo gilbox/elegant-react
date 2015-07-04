@@ -58,7 +58,6 @@ class App extends Component {
 }
 
 // the Renderer component manages the top-level app state
-@elegant
 class Renderer extends Component {
   constructor() {
     super(...arguments);
