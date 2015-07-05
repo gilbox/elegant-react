@@ -19,18 +19,15 @@ export default function createElegantDecorator(React, debug) {
       }
 
       componentWillReceiveProps(newProps) {
-        updateStatics(statics, this.wrappedProps, newProps)
+        updateStatics(statics, this.decoratedProps, newProps)
       }
 
       render() {
         if (debug) console.log(`render <${ElegantDecorator.displayName}>`);
 
-        this.wrappedProps = wrapStatics(statics, this.props);
+        this.decoratedProps = wrapStatics(statics, this.props);
 
-        return (<DecoratedComponent {...this.wrappedProps} />);
-
-        // could be optimized with createElement
-        // return React.createElement(DecoratedComponent, this.wrappedProps, this.wrappedProps.children);
+        return React.createElement(DecoratedComponent, this.decoratedProps);
       }
     };
   }

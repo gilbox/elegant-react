@@ -1,8 +1,7 @@
-const React = require('react');
-const {Component} = React;
-const {Spring} = require('./springs');
-const Scroll = require('./scroll');
-const RangeControl = require('./range-control');
+import React, {Component} from 'react';
+import {Spring} from './springs';
+import Scroll from './scroll';
+import RangeControl from './range-control';
 
 const translate3d = (x,y,z) => `translate3d(${x}px, ${y}px, ${z}px)`;
 

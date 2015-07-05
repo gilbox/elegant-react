@@ -1,9 +1,10 @@
-const React = require('react');
-const {Component} = React;
-const {elegant, sub} = require('elegant-react')({debug: true});
-const {fromJS} = require('immutable');
-const flyd = require('flyd');
-const {stream} = flyd;
+import React, {Component, PropTypes} from 'react';
+import ElegantReact from 'elegant-react';
+import {fromJS, List, Map as IMap} from 'immutable';
+import flyd, {stream} from 'flyd';
+import {createHistoryPlugin} from './history-plugin';
+
+const {elegant, sub} = ElegantReact({debug: true});
 
 const newBlankEntry = _ => fromJS({name: '', phone: ''});
 
@@ -35,6 +36,12 @@ const formatPhone = p => p &&
 
 @elegant({statics: ['edit']})
 class FormattedInput extends Component {
+  static propTypes = {
+    edit: PropTypes.func.isRequired,
+    parser: PropTypes.func.isRequired,
+    formatter: PropTypes.func.isRequired,
+    value: PropTypes.string.isRequired
+  }
   render() {
     const {value, formatter, parser, edit} = this.props;
     return (
@@ -49,6 +56,10 @@ class FormattedInput extends Component {
 // input field that only allows 10 digits, and formats like XXX-XXX-XXXX
 @elegant({statics: ['editPhone']})
 class PhoneInput extends Component {
+  static propTypes = {
+    editPhone: PropTypes.func.isRequired,
+    value: PropTypes.string.isRequired
+  }
   render() {
     const {value, editPhone} = this.props;
 
@@ -66,6 +77,10 @@ class PhoneInput extends Component {
 // input field that disallows digits
 @elegant({statics: ['editName']})
 class NameInput extends Component {
+  static propTypes = {
+    editName: PropTypes.func.isRequired,
+    value: PropTypes.string.isRequired
+  }
   render() {
     const {value, editName} = this.props;
 
@@ -83,6 +98,10 @@ class NameInput extends Component {
 // a single phone book entry
 @elegant({statics: ['deleteEntry']})
 class Entry extends Component {
+  static propTypes = {
+    deleteEntry: PropTypes.func.isRequired,
+    entry: PropTypes.instanceOf(IMap).isRequired
+  }
   render() {
     const {entry, deleteEntry} = this.props;
 
@@ -99,6 +118,10 @@ class Entry extends Component {
 // grid of phone book entries
 @elegant({statics: ['editEntries']})
 class Entries extends Component {
+  static propTypes = {
+    editEntries: PropTypes.func.isRequired,
+    entries: PropTypes.instanceOf(List).isRequired
+  }
   render() {
     const {entries, editEntries} = this.props;
 
@@ -124,6 +147,15 @@ const handleEvent = handler => event => {
 // Form for creating a new phone book entry
 @elegant({statics: ['edit', 'addNewEntry', 'nameUndo', 'phoneUndo']})
 class NewEntry extends Component {
+  static propTypes = {
+    edit: PropTypes.func.isRequired,
+    addNewEntry: PropTypes.func.isRequired,
+    nameUndo: PropTypes.func.isRequired,
+    phoneUndo: PropTypes.func.isRequired,
+    data: PropTypes.instanceOf(IMap).isRequired,
+    nameHistoryCount: PropTypes.number.isRequired,
+    phoneHistoryCount: PropTypes.number.isRequired,
+  }
   render() {
     const {data, nameHistoryCount, phoneHistoryCount,
            edit, addNewEntry, nameUndo, phoneUndo} = this.props;
@@ -199,31 +231,8 @@ class App extends Component {
   }
 }
 
-const filterStream = (predicate, s) =>
-  flyd.stream([s], (self) => {
-    if (predicate(s())) self(s.val);
-  });
-
-const last = arr => arr[arr.length - 1];
-
 const subStream = (dataStream, ...path) =>
   flyd.map(data => data.getIn(path), dataStream);
-
-const createHistoryStore =
-  (previousStateStream, stateStream, undoStream, outputStream, outputCountStream) => {
-    const history = [];
-    const filteredStateStream =
-      filterStream(state => state !== previousStateStream(), stateStream);
-
-    flyd.on(state => {
-      outputCountStream(history.push(previousStateStream()))
-    }, filteredStateStream);
-
-    flyd.on(undo => {
-      outputStream(history.pop());
-      outputCountStream(history.length);
-    }, undoStream);
-  };
 
 const logstream = s => {
   s = s || stream();
@@ -242,8 +251,8 @@ class Renderer extends Component {
       data: this.data = props.initialState}
     // create our streams...
 
-    this.stateStream = stream();
-    this.previousStateStream = stream();
+    this.editStream = stream();
+    this.previousEditStream = stream();
     this.nameUndoActionStream = stream();
     this.phoneUndoActionStream = stream();
     this.entriesUndoActionStream = stream();
@@ -252,23 +261,23 @@ class Renderer extends Component {
 
     const wiredStream = ::this.wiredStream;
 
-    createHistoryStore(
-      subStream(this.previousStateStream, 'newEntry', 'name'),
-      subStream(this.stateStream, 'newEntry', 'name'),
+    createHistoryPlugin(
+      subStream(this.previousEditStream, 'newEntry', 'name'),
+      subStream(this.editStream, 'newEntry', 'name'),
       this.nameUndoActionStream,
       wiredStream('newEntry', 'name'),
       wiredStream('nameHistoryCount'));
 
-    createHistoryStore(
-      subStream(this.previousStateStream, 'newEntry', 'phone'),
-      subStream(this.stateStream, 'newEntry', 'phone'),
+    createHistoryPlugin(
+      subStream(this.previousEditStream, 'newEntry', 'phone'),
+      subStream(this.editStream, 'newEntry', 'phone'),
       this.phoneUndoActionStream,
       wiredStream('newEntry', 'phone'),
       wiredStream('phoneHistoryCount'));
 
-    createHistoryStore(
-      subStream(this.previousStateStream, 'entries'),
-      subStream(this.stateStream, 'entries'),
+    createHistoryPlugin(
+      subStream(this.previousEditStream, 'entries'),
+      subStream(this.editStream, 'entries'),
       this.entriesUndoActionStream,
       wiredStream('entries'),
       wiredStream('entriesHistoryCount'));
@@ -295,9 +304,9 @@ class Renderer extends Component {
   }
 
   edit (transform) {
-    this.previousStateStream(this.data);
+    this.previousEditStream(this.data);
     this.updateData(transform);
-    this.stateStream(this.data);
+    this.editStream(this.data);
   }
 
   render() {

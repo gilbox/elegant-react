@@ -1,54 +1,104 @@
+// todo:
 // auto-selectable
-// isDirty
-// isInvalid
+// isDirty (done)
+// isInvalid (done)
 // isDisabled
 
-const React = require('react');
-const {Component} = React;
-const {elegant, subedit} = require('elegant-react')({debug: true});
-const {fromJS} = require('immutable');
+import React, {Component} from 'react';
+import ElegantReact from 'elegant-react';
+import {fromJS, Map as IMap} from 'immutable';
+import flyd, {stream} from 'flyd';
+import {createValidatingValue,
+        createValidationPlugin,
+        validator} from './validation-plugin';
+import validationDecorator from './validation-decorator';
+import {USER_SCHEMA} from './user-schema';
 
-const createValue = value => { value };
+const {elegant, sub} = ElegantReact({debug: true});
 
 const initialState = fromJS({
-  name: createValue('joe shmoe'),
-  phone: createValue('6665552222'),
-  age: createValue('')
+  user: {
+    name: createValidatingValue('joe shmoe', ['name']),
+    info: { // making this arbitraritly complex for demonstration purposes
+      phone: createValidatingValue('6665552222', ['phone']),
+      age: createValidatingValue('', ['age'])
+    }
+  }
 });
+
+const styles = {
+  invalid: {
+    border: '1px solid red'
+  },
+  dirty: {
+    border: '1px solid blue'
+  }
+};
 
 const parsePhone = v => v.replace(/\D/g, '').substr(0,10);
 
-const formatPhone = p =>
+const formatPhone = p => p &&
   [p[0],p[1],p[2],'-',p[3],p[4],p[5],'-',p[6],p[7],p[8],p[9]]
     .join('')
     .replace(/-+$/,'');
 
-@elegant({statics: ['editPhone']})
+@elegant({statics: ['edit']})
+@validationDecorator
 class PhoneInput extends Component {
   render() {
-    const {value} = this.props;
-    const {editPhone} = this.props.statics;
+    const {value, edit, isDirty, isInvalid} = this.props;
 
     return (
       <input
+        style={{ ...(isDirty && styles.dirty),
+                 ...(isInvalid && styles.invalid) }}
         value={formatPhone(value)}
         onChange={event =>
-          editPhone(phone => parsePhone(event.target.value)) } />
+          edit(phone => parsePhone(event.target.value)) } />
     )
   }
 }
 
 @elegant({statics: ['edit']})
+@validationDecorator
 class Input extends Component {
   render() {
-    const {value,edit} = this.props;
+    const {value, edit, isDirty, isInvalid} = this.props;
 
     return (
       <input
+        style={{ ...(isDirty && styles.dirty),
+                 ...(isInvalid && styles.invalid) }}
         value={value}
         onChange={event =>
           edit(value => event.target.value) } />
     )
+  }
+}
+
+@elegant({statics: ['editUser']})
+class UserForm extends Component {
+  render() {
+    const {data,editUser} = this.props;
+
+    return  <div>
+      <label>
+        Name:
+        <Input
+          value={data.getIn(['name'])}
+          edit={sub(editUser,'name')} />
+      </label>
+
+      <br />
+
+      <label>
+        Phone:
+        <PhoneInput
+          value={data.getIn(['info','phone'])}
+          edit={sub(editUser,'info','phone')} />
+      </label>
+
+    </div>;
   }
 }
 
@@ -59,27 +109,57 @@ class App extends Component {
 
     return  <div>
       <h1>Validation Demo</h1>
-      <PhoneInput
-        value={data.getIn(['phone','value'])}
-        editPhone={sub(edit,'phone','value')} />
+      <UserForm
+        data={data.get('user')}
+        editUser={sub(edit, 'user')} />
 
-      <Input
-        value={data.getIn(['name','value'])}
-        edit={sub(edit,'name','value')} />
+      <p>When a field is <b>dirty</b> there is a <span style={styles.dirty}>blue</span> border.</p>
+      <p>When a field is <b>invalid</b> there is a <span style={styles.invalid}>red</span> border.</p>
     </div>;
   }
 }
 
+const subStream = (dataStream, ...path) =>
+  flyd.map(data => data.getIn(path), dataStream);
+
+
 // the Renderer component manages the top-level app state
-@elegant
 class Renderer extends Component {
   constructor() {
     super(...arguments);
-    this.state = {data:this.props.initialState};
+
+    const wiredStream = ::this.wiredStream;
+    this.edit$ = stream();
+
+    createValidationPlugin( USER_SCHEMA,
+                            subStream(this.edit$, 'user'),
+                            wiredStream('user') );
+
+    this.state = {data: this.data = this.props.initialState};
   }
+
+  // returns a stream whose writes
+  // directly update application state
+  wiredStream(...path) {
+    const s = stream();
+    const updateData = ::this.updateData;
+
+    flyd.on(newData => {
+      updateData(data => data.setIn(path, newData));
+    }, s);
+    return s;
+  }
+
+  updateData(transform) {
+    this.setState({data: this.data = transform(this.data)});
+    console.log('this.data', this.data.toJS());
+  }
+
   edit (transform) {
-    this.setState({data: transform(this.state.data)})
+    this.updateData(transform);
+    this.edit$(this.data);
   }
+
   render() {
     return <App
       data={this.state.data}

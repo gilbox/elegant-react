@@ -1,7 +1,8 @@
-const React = require('react');
-const {Component} = React;
-const {elegant, sub} = require('elegant-react')({debug: true});
-const {fromJS} = require('immutable');
+import React, {Component} from 'react';
+import ElegantReact from 'elegant-react';
+import {fromJS} from 'immutable';
+
+const {elegant, sub} = ElegantReact({debug: true});
 
 const initialState = fromJS({
   phone: '6665552222'
@@ -43,7 +44,6 @@ class App extends Component {
 }
 
 // the Renderer component manages the top-level app state
-@elegant
 class Renderer extends Component {
   constructor() {
     super(...arguments);

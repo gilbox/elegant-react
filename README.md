@@ -4,6 +4,36 @@ Functional React Architecture inspired by [omniscient](http://omniscientjs.githu
 Comments/suggestions/PRs are all welcome. This is still experimental.
 
 
+## what is elegant-react?
+
+`elegant-react` is an npm package. The source code for the npm package is in the `src/`
+directory of this repo.
+
+This github repo is also currently the home for a growing number of experiments
+related to React functional patterns. The code for these experiments
+live in the `examples/` dir. Some use the `elegant-react` npm package but others,
+for the sake of simplicity, do not.
+
+The `elegant-react` npm package provides:
+
+  - A simple ES7 class decorator ([`@elegant-react`](https://github.com/gilbox/elegant-react/blob/master/src/create-elegant-decorator.js))
+    that via a higher-order component (HoC) facilitates working with immutable data:
+
+      * Automatically optimizes your shouldComponentUpdate. In order
+        for this optimization to be efficient, all props passed to components should be
+        scalar or immutable values. If you need to further optimize `shouldComponentUpdate`
+        you can define your own, and because the `@elegant` decorator is a HoC there's
+        no need to worry about collisions.
+
+      * Allows designated props to be treated as *static* so that changes to those
+        props don't trigger render updates.
+
+  - A simple [subedit](https://github.com/gilbox/elegant-react/blob/master/src/index.js#L4) function that looks like this:
+
+          const subedit = (edit, ...path) => transform =>
+              edit(state => state.updateIn(path, transform));
+
+
 ## about
 
 This repo started off as a demonstration of some concepts that I wrote about in [this Medium article](https://medium.com/@gilbox/an-elegant-functional-architecture-for-react-faa3fb42b75b) and [this one](https://medium.com/p/7acf5d0cf00e) as well. However, since that time elegant-react
@@ -22,13 +52,14 @@ Install via npm
 
 ## Bringing it into your project
 
-Require it:
+Import it:
 
-    const {elegant, subedit} = require('elegant-react');
+    import {elegant, subedit} from 'elegant-react';
 
 Or if you'd like to enable debug mode:
 
-    const {elegant, subedit} = require('elegant-react')({debug: true});
+    import ElegantReact from 'elegant-react';
+    const {elegant, subedit} = ElegantReact({debug: true});
 
 Note: the `subedit` function is also available as `sub`. It's a personal
 preference which you use. I like the way that `sub(edit, 'foo')` reads.
@@ -37,11 +68,12 @@ preference which you use. I like the way that `sub(edit, 'foo')` reads.
 
 Require it:
 
-    const {elegant, subedit} = require('elegant-react/native');
+    import {elegant, subedit} from 'elegant-react/native';
 
 Or if you'd like to enable debug mode:
 
-    const {elegant, subedit} = require('elegant-react/native')({debug: true});
+    import ElegantReact from 'elegant-react/native';
+    const {elegant, subedit} = ElegantReact({debug: true});
 
 
 ## Using in codepen, jsbin, etc.
@@ -113,6 +145,9 @@ You might notice that elegant-react has no `dependencies` nor `peerDependencies`
 listed in it's package.json file. This is so it can support both react and react-native
 from the same npm package.
 
+Although it's not a hard dependency, the provided `subedit` function is known
+to work with `immutable-js`. If you wish to use a different immutable lib,
+just create your own subedit function and it should work.
 
 ## Run the examples
 
@@ -145,6 +180,8 @@ Clone this repo, then:
 - [Address Book w/"Store" streams](http://gilbox.github.io/elegant-react/examples/address-book-store-streams/demo.html)
 - [Scroll Spring Animation](http://gilbox.github.io/elegant-react/examples/scroll-spring-animation/demo.html)
 - [Reorder Items](http://gilbox.github.io/elegant-react/examples/reorder-items/demo.html)
+- [Form Validation (wip)](http://gilbox.github.io/elegant-react/examples/form-validation/demo.html)
+
 
 ## credit
 

@@ -1,5 +1,4 @@
-const React = require('react');
-const {Component} = React;
+import React, {Component} from 'react';
 
 export default class Scroll extends Component {
   constructor(props) {

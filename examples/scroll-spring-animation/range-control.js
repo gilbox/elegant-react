@@ -1,5 +1,4 @@
-const React = require('react');
-const {Component} = React;
+import React, {Component} from 'react';
 
 const translate3d = (x,y,z) => `translate3d(${x}px, ${y}px, ${z}px)`;
 
