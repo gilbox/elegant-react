@@ -1,6 +1,7 @@
+// todo:
 // auto-selectable
-// isDirty
-// isInvalid
+// isDirty (done)
+// isInvalid (done)
 // isDisabled
 
 import React, {Component} from 'react';
@@ -29,6 +30,10 @@ const styles = {
   invalid: {
     display: 'inline-block',
     border: '1px solid red'
+  },
+  dirty: {
+    display: 'inline-block',
+    border: '1px solid blue'
   }
 };
 
@@ -43,11 +48,12 @@ const formatPhone = p => p &&
 @validationDecorator
 class PhoneInput extends Component {
   render() {
-    const {value, edit, isInvalid} = this.props;
+    const {value, edit, isDirty, isInvalid} = this.props;
 
     return (
       <input
-        style={{ ...(isInvalid && styles.invalid) }}
+        style={{ ...(isDirty && styles.dirty),
+                 ...(isInvalid && styles.invalid) }}
         value={formatPhone(value)}
         onChange={event =>
           edit(phone => parsePhone(event.target.value)) } />
@@ -59,11 +65,12 @@ class PhoneInput extends Component {
 @validationDecorator
 class Input extends Component {
   render() {
-    const {value, edit, isInvalid} = this.props;
+    const {value, edit, isDirty, isInvalid} = this.props;
 
     return (
       <input
-        style={{ ...(isInvalid && styles.invalid) }}
+        style={{ ...(isDirty && styles.dirty),
+                 ...(isInvalid && styles.invalid) }}
         value={value}
         onChange={event =>
           edit(value => event.target.value) } />
