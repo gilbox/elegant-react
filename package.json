@@ -29,6 +29,7 @@
     "babel-loader": "^5.2.2",
     "flyd": "^0.1.14",
     "immutable": "^3.7.3",
+    "jjv": "^1.0.2",
     "node-libs-browser": "^0.5.2",
     "react": "0.13.x",
     "rebound": "0.0.13",

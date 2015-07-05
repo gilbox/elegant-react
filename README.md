@@ -178,6 +178,8 @@ Clone this repo, then:
 - [Address Book w/"Store" streams](http://gilbox.github.io/elegant-react/examples/address-book-store-streams/demo.html)
 - [Scroll Spring Animation](http://gilbox.github.io/elegant-react/examples/scroll-spring-animation/demo.html)
 - [Reorder Items](http://gilbox.github.io/elegant-react/examples/reorder-items/demo.html)
+- [Form Validation (wip)](http://gilbox.github.io/elegant-react/examples/form-validation/demo.html)
+
 
 ## credit
 
