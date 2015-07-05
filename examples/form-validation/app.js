@@ -10,6 +10,7 @@ import flyd, {stream} from 'flyd';
 import {createValidatingValue,
         createValidationPlugin,
         validator} from './validation-plugin';
+import validationDecorator from './validation-decorator';
 import {USER_SCHEMA} from './user-schema';
 
 const {elegant, sub} = ElegantReact({debug: true});
@@ -24,6 +25,13 @@ const initialState = fromJS({
   }
 });
 
+const styles = {
+  invalid: {
+    display: 'inline-block',
+    border: '1px solid red'
+  }
+};
+
 const parsePhone = v => v.replace(/\D/g, '').substr(0,10);
 
 const formatPhone = p => p &&
@@ -31,27 +39,31 @@ const formatPhone = p => p &&
     .join('')
     .replace(/-+$/,'');
 
-@elegant({statics: ['editPhone']})
+@elegant({statics: ['edit']})
+@validationDecorator
 class PhoneInput extends Component {
   render() {
-    const {value,editPhone} = this.props;
+    const {value, edit, isInvalid} = this.props;
 
     return (
       <input
+        style={{ ...(isInvalid && styles.invalid) }}
         value={formatPhone(value)}
         onChange={event =>
-          editPhone(phone => parsePhone(event.target.value)) } />
+          edit(phone => parsePhone(event.target.value)) } />
     )
   }
 }
 
 @elegant({statics: ['edit']})
+@validationDecorator
 class Input extends Component {
   render() {
-    const {value,edit} = this.props;
+    const {value, edit, isInvalid} = this.props;
 
     return (
       <input
+        style={{ ...(isInvalid && styles.invalid) }}
         value={value}
         onChange={event =>
           edit(value => event.target.value) } />
@@ -68,8 +80,8 @@ class UserForm extends Component {
       <label>
         Name:
         <Input
-          value={data.getIn(['name','value'])}
-          edit={sub(editUser,'name','value')} />
+          value={data.getIn(['name'])}
+          edit={sub(editUser,'name')} />
       </label>
 
       <br />
@@ -77,8 +89,8 @@ class UserForm extends Component {
       <label>
         Phone:
         <PhoneInput
-          value={data.getIn(['info','phone','value'])}
-          editPhone={sub(editUser,'info','phone','value')} />
+          value={data.getIn(['info','phone'])}
+          edit={sub(editUser,'info','phone')} />
       </label>
 
     </div>;
