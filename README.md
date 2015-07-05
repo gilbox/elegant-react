@@ -4,6 +4,30 @@ Functional React Architecture inspired by [omniscient](http://omniscientjs.githu
 Comments/suggestions/PRs are all welcome. This is still experimental.
 
 
+## what is elegant-react?
+
+`elegant-react` is an npm package. The source code for the npm package is in the `src/`
+directory of this repo. This package provides a simple ES7 class decorator (`@elegant-react`)
+that via a higher-order component that facilitates working with immutable data:
+
+  - Automatically optimizes your shouldComponentUpdate. In order
+    for this optimization to be efficient, all props passed to components should be
+    scalar or immutable values.
+
+  - Provides a simple subedit function that looks like this:
+
+          const subedit = (edit, ...path) => transform =>
+              edit(state => state.updateIn(path, transform));
+
+  - Allows designated props to be treated as static so that changes to those
+    props don't trigger render updates.
+
+This github repo is also currently the home for a growing number of experiments
+related to React functional patterns. The code for these experiemnts
+live in the `examples/` dir. Some use the `elegant-react` npm package but others,
+for the sake of simplicity, do not.
+
+
 ## about
 
 This repo started off as a demonstration of some concepts that I wrote about in [this Medium article](https://medium.com/@gilbox/an-elegant-functional-architecture-for-react-faa3fb42b75b) and [this one](https://medium.com/p/7acf5d0cf00e) as well. However, since that time elegant-react
