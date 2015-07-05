@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import ElegantReact from 'elegant-react';
 import {fromJS, List, Map as IMap} from 'immutable';
 import flyd, {stream} from 'flyd';
+import {createHistoryPlugin} from './history-plugin';
 
 const {elegant, sub} = ElegantReact({debug: true});
 
@@ -230,31 +231,8 @@ class App extends Component {
   }
 }
 
-const filterStream = (predicate, s) =>
-  flyd.stream([s], (self) => {
-    if (predicate(s())) self(s.val);
-  });
-
-const last = arr => arr[arr.length - 1];
-
 const subStream = (dataStream, ...path) =>
   flyd.map(data => data.getIn(path), dataStream);
-
-const createHistoryStore =
-  (previousStateStream, stateStream, undoStream, outputStream, outputCountStream) => {
-    const history = [];
-    const filteredStateStream =
-      filterStream(state => state !== previousStateStream(), stateStream);
-
-    flyd.on(state => {
-      outputCountStream(history.push(previousStateStream()))
-    }, filteredStateStream);
-
-    flyd.on(undo => {
-      outputStream(history.pop());
-      outputCountStream(history.length);
-    }, undoStream);
-  };
 
 const logstream = s => {
   s = s || stream();
@@ -273,8 +251,8 @@ class Renderer extends Component {
       data: this.data = props.initialState}
     // create our streams...
 
-    this.stateStream = stream();
-    this.previousStateStream = stream();
+    this.editStream = stream();
+    this.previousEditStream = stream();
     this.nameUndoActionStream = stream();
     this.phoneUndoActionStream = stream();
     this.entriesUndoActionStream = stream();
@@ -283,23 +261,23 @@ class Renderer extends Component {
 
     const wiredStream = ::this.wiredStream;
 
-    createHistoryStore(
-      subStream(this.previousStateStream, 'newEntry', 'name'),
-      subStream(this.stateStream, 'newEntry', 'name'),
+    createHistoryPlugin(
+      subStream(this.previousEditStream, 'newEntry', 'name'),
+      subStream(this.editStream, 'newEntry', 'name'),
       this.nameUndoActionStream,
       wiredStream('newEntry', 'name'),
       wiredStream('nameHistoryCount'));
 
-    createHistoryStore(
-      subStream(this.previousStateStream, 'newEntry', 'phone'),
-      subStream(this.stateStream, 'newEntry', 'phone'),
+    createHistoryPlugin(
+      subStream(this.previousEditStream, 'newEntry', 'phone'),
+      subStream(this.editStream, 'newEntry', 'phone'),
       this.phoneUndoActionStream,
       wiredStream('newEntry', 'phone'),
       wiredStream('phoneHistoryCount'));
 
-    createHistoryStore(
-      subStream(this.previousStateStream, 'entries'),
-      subStream(this.stateStream, 'entries'),
+    createHistoryPlugin(
+      subStream(this.previousEditStream, 'entries'),
+      subStream(this.editStream, 'entries'),
       this.entriesUndoActionStream,
       wiredStream('entries'),
       wiredStream('entriesHistoryCount'));
@@ -326,9 +304,9 @@ class Renderer extends Component {
   }
 
   edit (transform) {
-    this.previousStateStream(this.data);
+    this.previousEditStream(this.data);
     this.updateData(transform);
-    this.stateStream(this.data);
+    this.editStream(this.data);
   }
 
   render() {
