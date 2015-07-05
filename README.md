@@ -23,7 +23,7 @@ that via a higher-order component that facilitates working with immutable data:
     props don't trigger render updates.
 
 This github repo is also currently the home for a growing number of experiments
-related to React functional patterns. The code for these experiemnts
+related to React functional patterns. The code for these experiments
 live in the `examples/` dir. Some use the `elegant-react` npm package but others,
 for the sake of simplicity, do not.
 
@@ -137,6 +137,9 @@ You might notice that elegant-react has no `dependencies` nor `peerDependencies`
 listed in it's package.json file. This is so it can support both react and react-native
 from the same npm package.
 
+Although it's not a hard dependency, the provided `subedit` function is known
+to work with `immutable-js`. If you wish to use a different immutable lib,
+just create your own subedit function and it should work.
 
 ## Run the examples
 
