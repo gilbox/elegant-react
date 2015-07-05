@@ -28,11 +28,9 @@ const initialState = fromJS({
 
 const styles = {
   invalid: {
-    display: 'inline-block',
     border: '1px solid red'
   },
   dirty: {
-    display: 'inline-block',
     border: '1px solid blue'
   }
 };
@@ -114,6 +112,9 @@ class App extends Component {
       <UserForm
         data={data.get('user')}
         editUser={sub(edit, 'user')} />
+
+      <p>When a field is <b>dirty</b> there is a <span style={styles.dirty}>blue</span> border.</p>
+      <p>When a field is <b>invalid</b> there is a <span style={styles.invalid}>red</span> border.</p>
     </div>;
   }
 }
