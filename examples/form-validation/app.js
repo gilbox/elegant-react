@@ -35,6 +35,27 @@ const styles = {
   }
 };
 
+@elegant({statics: ['edit']})
+@validationDecorator
+class Input extends Component {
+  static defaultProps = {
+    formatter: x => x,
+    parser: x => x
+  }
+  render() {
+    const {value, edit, isDirty, isInvalid, formatter, parser} = this.props;
+
+    return (
+      <input
+        style={{ ...(isDirty && styles.dirty),
+                 ...(isDirty && isInvalid && styles.invalid) }}
+        value={formatter(value)}
+        onChange={event =>
+          edit(value => parser(event.target.value)) } />
+    )
+  }
+}
+
 const parsePhone = v => v.replace(/\D/g, '').substr(0,10);
 
 const formatPhone = p => p &&
@@ -43,36 +64,9 @@ const formatPhone = p => p &&
     .replace(/-+$/,'');
 
 @elegant({statics: ['edit']})
-@validationDecorator
 class PhoneInput extends Component {
   render() {
-    const {value, edit, isDirty, isInvalid} = this.props;
-
-    return (
-      <input
-        style={{ ...(isDirty && styles.dirty),
-                 ...(isInvalid && styles.invalid) }}
-        value={formatPhone(value)}
-        onChange={event =>
-          edit(phone => parsePhone(event.target.value)) } />
-    )
-  }
-}
-
-@elegant({statics: ['edit']})
-@validationDecorator
-class Input extends Component {
-  render() {
-    const {value, edit, isDirty, isInvalid} = this.props;
-
-    return (
-      <input
-        style={{ ...(isDirty && styles.dirty),
-                 ...(isInvalid && styles.invalid) }}
-        value={value}
-        onChange={event =>
-          edit(value => event.target.value) } />
-    )
+    return <Input {...this.props} formatter={formatPhone} parser={parsePhone} />
   }
 }
 
@@ -96,6 +90,16 @@ class UserForm extends Component {
         <PhoneInput
           value={data.getIn(['info','phone'])}
           edit={sub(editUser,'info','phone')} />
+      </label>
+
+      <br />
+
+      <label>
+        Age:
+        <Input
+          parser={input => ~~input || ''}
+          value={data.getIn(['info','age'])}
+          edit={sub(editUser,'info','age')} />
       </label>
 
     </div>;
