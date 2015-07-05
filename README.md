@@ -52,13 +52,14 @@ Install via npm
 
 ## Bringing it into your project
 
-Require it:
+Import it:
 
-    const {elegant, subedit} = require('elegant-react');
+    import {elegant, subedit} from 'elegant-react';
 
 Or if you'd like to enable debug mode:
 
-    const {elegant, subedit} = require('elegant-react')({debug: true});
+    import ElegantReact from 'elegant-react';
+    const {elegant, subedit} = ElegantReact({debug: true});
 
 Note: the `subedit` function is also available as `sub`. It's a personal
 preference which you use. I like the way that `sub(edit, 'foo')` reads.
@@ -67,11 +68,12 @@ preference which you use. I like the way that `sub(edit, 'foo')` reads.
 
 Require it:
 
-    const {elegant, subedit} = require('elegant-react/native');
+    import {elegant, subedit} from 'elegant-react/native';
 
 Or if you'd like to enable debug mode:
 
-    const {elegant, subedit} = require('elegant-react/native')({debug: true});
+    import ElegantReact from 'elegant-react/native';
+    const {elegant, subedit} = ElegantReact({debug: true});
 
 
 ## Using in codepen, jsbin, etc.
