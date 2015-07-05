@@ -7,20 +7,24 @@ Comments/suggestions/PRs are all welcome. This is still experimental.
 ## what is elegant-react?
 
 `elegant-react` is an npm package. The source code for the npm package is in the `src/`
-directory of this repo. This package provides a simple ES7 class decorator (`@elegant-react`)
-that via a higher-order component that facilitates working with immutable data:
+directory of this repo.
 
-  - Automatically optimizes your shouldComponentUpdate. In order
-    for this optimization to be efficient, all props passed to components should be
-    scalar or immutable values.
+This package provides:
 
-  - Provides a simple subedit function that looks like this:
+  - A simple ES7 class decorator (`@elegant-react`)
+    that via a higher-order component that facilitates working with immutable data:
+
+      * Automatically optimizes your shouldComponentUpdate. In order
+        for this optimization to be efficient, all props passed to components should be
+        scalar or immutable values.
+
+      * Allows designated props to be treated as static so that changes to those
+        props don't trigger render updates.
+
+  - A simple subedit function that looks like this:
 
           const subedit = (edit, ...path) => transform =>
               edit(state => state.updateIn(path, transform));
-
-  - Allows designated props to be treated as static so that changes to those
-    props don't trigger render updates.
 
 This github repo is also currently the home for a growing number of experiments
 related to React functional patterns. The code for these experiments
