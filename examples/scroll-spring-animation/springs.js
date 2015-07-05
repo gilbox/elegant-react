@@ -1,7 +1,7 @@
 // copied and modified from https://raw.githubusercontent.com/threepointone/react-springs/master/src.js
 // because react-native support breaks the build process
 
-var React = require('react');
+import React from 'react';
 // try{ React = require('react-native'); }
 // catch(e){ React = require('react'); }
 // the above bit should get better after https://github.com/facebook/react/issues/3220

@@ -1,9 +1,9 @@
-const React = require('react');
-const {Component, PropTypes} = React;
-const {elegant, sub} = require('elegant-react')({debug: true});
-const {fromJS, List, Map: IMap} = require('immutable');
-const flyd = require('flyd');
-const {stream} = flyd;
+import React, {Component, PropTypes} from 'react';
+import ElegantReact from 'elegant-react';
+import {fromJS, List, Map as IMap} from 'immutable';
+import flyd, {stream} from 'flyd';
+
+const {elegant, sub} = ElegantReact({debug: true});
 
 const newBlankEntry = _ => fromJS({name: '', phone: ''});
 
