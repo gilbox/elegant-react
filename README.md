@@ -9,27 +9,29 @@ Comments/suggestions/PRs are all welcome. This is still experimental.
 `elegant-react` is an npm package. The source code for the npm package is in the `src/`
 directory of this repo.
 
-This package provides:
-
-  - A simple ES7 class decorator (`@elegant-react`)
-    that via a higher-order component that facilitates working with immutable data:
-
-      * Automatically optimizes your shouldComponentUpdate. In order
-        for this optimization to be efficient, all props passed to components should be
-        scalar or immutable values.
-
-      * Allows designated props to be treated as static so that changes to those
-        props don't trigger render updates.
-
-  - A simple subedit function that looks like this:
-
-          const subedit = (edit, ...path) => transform =>
-              edit(state => state.updateIn(path, transform));
-
 This github repo is also currently the home for a growing number of experiments
 related to React functional patterns. The code for these experiments
 live in the `examples/` dir. Some use the `elegant-react` npm package but others,
 for the sake of simplicity, do not.
+
+The `elegant-react` npm package provides:
+
+  - A simple ES7 class decorator ([`@elegant-react`](https://github.com/gilbox/elegant-react/blob/master/src/create-elegant-decorator.js))
+    that via a higher-order component (HoC) facilitates working with immutable data:
+
+      * Automatically optimizes your shouldComponentUpdate. In order
+        for this optimization to be efficient, all props passed to components should be
+        scalar or immutable values. If you need to further optimize `shouldComponentUpdate`
+        you can define your own, and because the `@elegant` decorator is a HoC there's
+        no need to worry about collisions.
+
+      * Allows designated props to be treated as *static* so that changes to those
+        props don't trigger render updates.
+
+  - A simple [subedit](https://github.com/gilbox/elegant-react/blob/master/src/index.js#L4) function that looks like this:
+
+          const subedit = (edit, ...path) => transform =>
+              edit(state => state.updateIn(path, transform));
 
 
 ## about
