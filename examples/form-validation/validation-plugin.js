@@ -41,8 +41,7 @@ function applyValidation(validation, data, path=[]) {
 export function validateWithSchema(validator, schemaName, data) {
   const dataToValidate = getDataShapedForValidation(data).toJS();
   const errors = validator.validate(schemaName, dataToValidate);
-  if (errors) return applyValidation(fromJS(errors.validation), data);
-  return data
+  return applyValidation(fromJS(errors ? errors.validation : {}), data);
 }
 
 // value is what we are validating
