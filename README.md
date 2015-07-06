@@ -149,6 +149,12 @@ Although it's not a hard dependency, the provided `subedit` function is known
 to work with `immutable-js`. If you wish to use a different immutable lib,
 just create your own subedit function and it should work.
 
+- subedit for [mori](http://swannodette.github.io/mori/) *(untested)*
+
+        const subedit = (edit, ...path) => transform =>
+            edit(state => mori.updateIn(state, path, transform));
+
+
 ## Run the examples
 
 Clone this repo, then:
