@@ -177,10 +177,21 @@ Clone this repo, then:
 ## live examples
 
 - [Phone Input](http://gilbox.github.io/elegant-react/examples/phone-input-field/demo.html)
-- [Address Book w/"Store" streams](http://gilbox.github.io/elegant-react/examples/address-book-store-streams/demo.html)
+  A very simple example of how to use `elegant-react` and a functional approach to creating
+  an input component with custom formatting and masking rules.
+- [Address Book with Stream-based Plugins](http://gilbox.github.io/elegant-react/examples/address-book-store-streams/demo.html)
+  Demonstrates how to use streams to create an undo/redo plugin.
+  Introduces the concepts of `previousEditStream`, `editStream`, and `wiredStream` that allows a plugin to gain read and/or write
+  access only to specific parts of the application state.
 - [Scroll Spring Animation](http://gilbox.github.io/elegant-react/examples/scroll-spring-animation/demo.html)
+  Demonstrates how to use `react-springs` (or `react-animation`) and how to create a scroll
+  handling component using the same functional technique.
 - [Reorder Items](http://gilbox.github.io/elegant-react/examples/reorder-items/demo.html)
+  A very simple demo showing how to use `elegant-react`.
 - [Form Validation (wip)](http://gilbox.github.io/elegant-react/examples/form-validation/demo.html)
+  Demonstrates how to create a robust plugin to handle validating form fields with a
+  json scema using the `jjv` npm package. Also demonstrates how to compose
+  decorators by combining `@elegant` with `@validationDecorator`.
 
 
 ## credit
