@@ -200,7 +200,7 @@ Clone this repo, then:
   decorators by combining `@elegant` with `@validationDecorator`.
 
 
-- **[elegant-react-hot-demo](https://github.com/gilbox/elegant-react-hot-demo) - This github repo demonstrates stream-based plugins (with flyd), animation with react-motion, hot reload, and time-travel scrubbing.
+- **[elegant-react-hot-demo](https://github.com/gilbox/elegant-react-hot-demo)** - This github repo demonstrates stream-based plugins (with flyd), animation with react-motion, hot reload, and time-travel scrubbing.
 
 ## credit
 
