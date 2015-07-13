@@ -1,6 +1,6 @@
 import {stream} from 'flyd';
 
-window.stream = stream;
+const identity2 = x=>x=>x;
 
 export default class Atoam {
   constructor(state) {
@@ -17,15 +17,15 @@ export default class Atoam {
     return this.didSetState$(this.state = state).val;
   }
 
-  _updateState(transform) {
+  silentlyUpdateState(transform) {
     return this._setState(this.state.update(transform));
+  }
+
+  updateState(transform) {
+    return this.didUpdateState$(this._setState(this.state.update(transform))).val;
   }
 
   getState() {
     return this.state;
-  }
-
-  updateState(transform) {
-    return this.didUpdateState$(this._updateState(transform)).val;
   }
 }

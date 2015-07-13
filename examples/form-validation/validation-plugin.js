@@ -30,7 +30,9 @@ function applyValidation(validation, data, path=[]) {
     const validationPath = v.get('validatorPath');
     if (validationPath) {
       // the deep merge prevents update when nothing has changed
-      data = data.mergeDeepIn(path.concat(key, 'validation'), validation.getIn(validationPath));
+      console.log('validation', validation);
+      data = data.setIn(path.concat(key, 'validation'), validation.getIn(validationPath));
+      // data = data.mergeDeepIn(path.concat(key, 'validation'), validation.getIn(validationPath));
     } else {
       data = applyValidation(validation, data, path.concat(key));
     }
@@ -50,10 +52,14 @@ export function validateWithSchema(validator, schemaName, data) {
 export const createValidatingValue =
   (value, validatorPath) => ({ value, validatorPath });
 
-export function createValidationPlugin({schema, edit$=stream(), output=stream()}) {
+export function createValidationPlugin({
+  schema,
+  didDidUpdateState$=stream(),
+  output=stream()
+}) {
   on(state => {
     output(state => validateWithSchema(validator, schema, state))
-  }, edit$);
+  }, didDidUpdateState$);
 
-  return {edit$, output};
+  return {didDidUpdateState$, output};
 }
