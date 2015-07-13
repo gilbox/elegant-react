@@ -9,10 +9,10 @@ import ElegantReact from 'elegant-react';
 import {fromJS, Map as IMap} from 'immutable';
 import flyd, {stream} from 'flyd';
 import {createValidatingValue,
-        createValidationPlugin,
-        validator} from './validation-plugin';
-import validationDecorator from './validation-decorator';
+        createValidationPlugin} from './validation-plugin';
+import UserForm from './UserForm';
 import {USER_SCHEMA} from './user-schema';
+import {styles} from './ValidatingInput';
 
 const {elegant, sub} = ElegantReact({debug: true});
 
@@ -25,93 +25,6 @@ const initialState = fromJS({
     }
   }
 });
-
-const styles = {
-  invalid: {
-    border: '1px solid red'
-  },
-  dirty: {
-    border: '1px solid blue'
-  }
-};
-
-const identity = x => x;
-
-@elegant({statics: ['edit','parser','formatter']})
-@validationDecorator
-class Input extends Component {
-  static defaultProps = {
-    formatter: identity,
-    parser: identity
-  }
-  componentWillUpdate(nextProps) {
-    const changed = Object.keys(nextProps).filter(key => nextProps[key] !== this.props[key]);
-  }
-  render() {
-    const {value, edit, isDirty, isInvalid, formatter, parser} = this.props;
-
-    return (
-      <input
-        style={{ ...(isDirty && styles.dirty),
-                 ...(isDirty && isInvalid && styles.invalid) }}
-        value={formatter(value)}
-        onChange={event =>
-          edit(value => parser(event.target.value)) } />
-    )
-  }
-}
-
-const parsePhone = v => v.replace(/\D/g, '').substr(0,10);
-
-const formatPhone = p => p &&
-  [p[0],p[1],p[2],'-',p[3],p[4],p[5],'-',p[6],p[7],p[8],p[9]]
-    .join('')
-    .replace(/-+$/,'');
-
-@elegant({statics: ['edit']})
-class PhoneInput extends Component {
-  render() {
-    return <Input {...this.props} formatter={formatPhone} parser={parsePhone} />
-  }
-}
-
-const parseAge = input => ~~input || '';
-
-@elegant({statics: ['editUser']})
-class UserForm extends Component {
-  render() {
-    const {data,editUser} = this.props;
-
-    return  <div>
-      <label>
-        Name:
-        <Input
-          value={data.getIn(['name'])}
-          edit={sub(editUser,'name')} />
-      </label>
-
-      <br />
-
-      <label>
-        Phone:
-        <PhoneInput
-          value={data.getIn(['info','phone'])}
-          edit={sub(editUser,'info','phone')} />
-      </label>
-
-      <br />
-
-      <label>
-        Age:
-        <Input
-          parser={parseAge}
-          value={data.getIn(['info','age'])}
-          edit={sub(editUser,'info','age')} />
-      </label>
-
-    </div>;
-  }
-}
 
 @elegant({statics: ['edit']})
 class App extends Component {

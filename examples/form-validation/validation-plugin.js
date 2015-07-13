@@ -50,10 +50,10 @@ export function validateWithSchema(validator, schemaName, data) {
 export const createValidatingValue =
   (value, validatorPath) => ({ value, validatorPath });
 
-export function createValidationPlugin({schema, edit$, output=stream()}) {
+export function createValidationPlugin({schema, edit$=stream(), output=stream()}) {
   on(state => {
     output(state => validateWithSchema(validator, schema, state))
   }, edit$);
 
-  return {output};
+  return {edit$, output};
 }
