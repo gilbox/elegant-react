@@ -35,12 +35,17 @@ const styles = {
   }
 };
 
-@elegant({statics: ['edit']})
+const identity = x => x;
+
+@elegant({statics: ['edit','parser','formatter']})
 @validationDecorator
 class Input extends Component {
   static defaultProps = {
-    formatter: x => x,
-    parser: x => x
+    formatter: identity,
+    parser: identity
+  }
+  componentWillUpdate(nextProps) {
+    const changed = Object.keys(nextProps).filter(key => nextProps[key] !== this.props[key]);
   }
   render() {
     const {value, edit, isDirty, isInvalid, formatter, parser} = this.props;
@@ -70,6 +75,8 @@ class PhoneInput extends Component {
   }
 }
 
+const parseAge = input => ~~input || '';
+
 @elegant({statics: ['editUser']})
 class UserForm extends Component {
   render() {
@@ -97,7 +104,7 @@ class UserForm extends Component {
       <label>
         Age:
         <Input
-          parser={input => ~~input || ''}
+          parser={parseAge}
           value={data.getIn(['info','age'])}
           edit={sub(editUser,'info','age')} />
       </label>
@@ -132,36 +139,23 @@ class Renderer extends Component {
   constructor() {
     super(...arguments);
 
-    const wiredStream = ::this.wiredStream;
-    this.edit$ = stream();
+    this.didEdit$ = stream();
 
-    createValidationPlugin( USER_SCHEMA,
-                            subStream(this.edit$, 'user'),
-                            wiredStream('user') );
+    createValidationPlugin( {schema: USER_SCHEMA,
+                             didEdit$: subStream(this.didEdit$, 'user'),
+                             output: sub(::this.updateData, 'user')} );
 
     this.state = {data: this.data = this.props.initialState};
-  }
-
-  // returns a stream whose writes
-  // directly update application state
-  wiredStream(...path) {
-    const s = stream();
-    const updateData = ::this.updateData;
-
-    flyd.on(newData => {
-      updateData(data => data.setIn(path, newData));
-    }, s);
-    return s;
   }
 
   updateData(transform) {
     this.setState({data: this.data = transform(this.data)});
     console.log('this.data', this.data.toJS());
+    return this.data;
   }
 
   edit (transform) {
-    this.updateData(transform);
-    this.edit$(this.data);
+    this.didEdit$(this.updateData(transform));
   }
 
   render() {
