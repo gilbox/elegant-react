@@ -6,8 +6,7 @@
 
 import React, {Component} from 'react';
 import ElegantReact, {sub} from 'elegant-react';
-import {VALUE_KEY,validationComponentDecorator} from './validation/'
-import {derive,track} from 'react-derive';
+import {validationComponentDecorator} from './validation/'
 
 export const styles = {
   invalid: {
@@ -29,6 +28,7 @@ export class Input extends Component {
     formatter: identity,
     parser: identity
   }
+
   render() {
     const {value, edit, isDirty, isInvalid, formatter, parser} = this.props;
 

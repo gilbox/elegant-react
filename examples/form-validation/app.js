@@ -24,7 +24,6 @@ const atom = window.atom = new Atom(initialState);
 const subStream = (dataStream, ...path) =>
   flyd.map(data => data.getIn(path), dataStream);
 
-@elegant({statics: ['edit']})
 class App extends Component {
   constructor(props) {
     super(props);
