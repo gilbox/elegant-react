@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import {Input,PhoneInput} from './ValidatingInput';
 import {elegant, sub} from 'elegant-react';
 import {derive,track} from 'react-derive';
-import {validateWithSchema, validator, } from './validation-plugin';
-import {USER_SCHEMA} from './user-schema';
+import {validateWithSchema} from './validation/';
+import {validateUser} from './user-validator';
 
 const parseAge = input => ~~input || '';
 
@@ -11,7 +11,8 @@ const parseAge = input => ~~input || '';
 @derive({
   @track('data')
   data({data}) {
-    return validateWithSchema(validator, USER_SCHEMA, data);
+    // decorate data with validation results
+    return validateWithSchema(validateUser, data);
   }
 })
 export default class UserForm extends Component {
@@ -31,8 +32,8 @@ export default class UserForm extends Component {
       <label>
         Phone:
         <PhoneInput
-          value={data.getIn(['info','phone'])}
-          edit={sub(editUser,'info','phone')} />
+          value={data.getIn(['phone'])}
+          edit={sub(editUser,'phone')} />
       </label>
 
       <br />
@@ -41,8 +42,8 @@ export default class UserForm extends Component {
         Age:
         <Input
           parser={parseAge}
-          value={data.getIn(['info','age'])}
-          edit={sub(editUser,'info','age')} />
+          value={data.getIn(['age'])}
+          edit={sub(editUser,'age')} />
       </label>
 
     </div>;

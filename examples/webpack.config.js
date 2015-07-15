@@ -38,6 +38,10 @@ module.exports = {
     }
   },
 
+  node: {
+    console: true
+  },
+
   plugins: [
     new webpack.optimize.CommonsChunkPlugin('shared.js'),
     new webpack.DefinePlugin({

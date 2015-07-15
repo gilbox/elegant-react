@@ -1,11 +1,12 @@
 // import React, {Component} from 'react';
 import {sub} from 'elegant-react';
 import {derive, track} from 'react-derive';
+import {VALUE_KEY} from './validate';
 
-export const validationDecorator = derive({
+export const validationComponentDecorator = derive({
   @track('value')
   value({value}) {
-    return value.get('value');
+    return value.get(VALUE_KEY);
   },
 
   @track('value')
@@ -20,9 +21,9 @@ export const validationDecorator = derive({
 
   @track('edit')
   edit({edit}) {
-    return (transform) => {
+    return (transform) => {  // "middleware"
       sub(edit, 'isDirty')(state => true);
-      return sub(edit, 'value')(transform);
+      return sub(edit, VALUE_KEY)(transform);
     };
   }
 })

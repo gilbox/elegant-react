@@ -3,9 +3,9 @@ import ElegantReact from 'elegant-react';
 import {fromJS, Map as IMap} from 'immutable';
 import flyd, {on, stream} from 'flyd';
 import {createValidatingValue,
-        createValidationPlugin} from './validation-plugin';
+        createValidationPlugin} from './validation/';
 import UserForm from './UserForm';
-import {USER_SCHEMA} from './user-schema';
+// import {USER_SCHEMA} from './user-schema';
 import {styles} from './ValidatingInput';
 import Atom from './Atom';
 
@@ -13,11 +13,9 @@ const {elegant, sub} = ElegantReact({debug: true});
 
 const initialState = fromJS({
   userForm: {
-    name: createValidatingValue('joe shmoe', ['name']),
-    info: { // making this arbitraritly complex for demonstration purposes
-      phone: createValidatingValue('6665552222', ['phone']),
-      age: createValidatingValue('', ['age'])
-    }
+    name: createValidatingValue('joe shmoe'),
+    phone: createValidatingValue('6665552222'),
+    age: createValidatingValue('')
   }
 });
 
@@ -40,9 +38,8 @@ class App extends Component {
     const {atom} = this.props;
     on(state => this.setState({state}), atom.didSetState$);
 
-    // todo: state->state implies derived data
-    // createValidationPlugin( {schema: USER_SCHEMA,
-    //                          didDidUpdateState$: subStream(atom.didUpdateState$, 'userForm'),
+    // createValidationPlugin( {validate: ....,
+    //                          state$: subStream(atom.didUpdateState$, 'userForm'),
     //                          output: sub(::atom.silentlyUpdateState, 'userForm')} );
   }
 

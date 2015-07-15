@@ -1,8 +1,6 @@
-import {validator} from './validation-plugin';
+import validator from 'is-my-json-valid';
 
-export const USER_SCHEMA = 'user';
-
-validator.addSchema(USER_SCHEMA, {
+export const validateUser = validator({
   type: 'object',
   properties: {
     name: {

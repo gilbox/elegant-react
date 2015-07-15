@@ -6,7 +6,7 @@
 
 import React, {Component} from 'react';
 import ElegantReact, {sub} from 'elegant-react';
-import validationDecorator from './validation-decorator';
+import {VALUE_KEY,validationComponentDecorator} from './validation/'
 import {derive,track} from 'react-derive';
 
 export const styles = {
@@ -22,38 +22,12 @@ const {elegant} = ElegantReact({debug: true});
 
 const identity = x => x;
 
-@elegant({statics: ['edit','parser','formatter']})
-@derive({
-  @track('value')
-  value({value}) {
-    return value.get('value');
-  },
-
-  @track('value')
-  isInvalid({value}) {
-    return !!value.get('validation');
-  },
-
-  @track('value')
-  isDirty({value}) {
-    return !!value.get('isDirty');
-  },
-
-  @track('edit')
-  edit({edit}) {
-    return (transform) => {
-      sub(edit, 'isDirty')(state => true);
-      return sub(edit, 'value')(transform);
-    };
-  }
-})
+@elegant({statics: ['edit']})
+@validationComponentDecorator
 export class Input extends Component {
   static defaultProps = {
     formatter: identity,
     parser: identity
-  }
-  componentWillUpdate(nextProps) {
-    const changed = Object.keys(nextProps).filter(key => nextProps[key] !== this.props[key]);
   }
   render() {
     const {value, edit, isDirty, isInvalid, formatter, parser} = this.props;
