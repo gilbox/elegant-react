@@ -1,4 +1,3 @@
-// import React, {Component} from 'react';
 import {sub} from 'elegant-react';
 import {derive, track} from 'react-derive';
 import {VALUE_KEY} from './validate';

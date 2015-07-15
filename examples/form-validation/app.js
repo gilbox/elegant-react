@@ -5,7 +5,6 @@ import flyd, {on, stream} from 'flyd';
 import {createValidatingValue,
         createValidationPlugin} from './validation/';
 import UserForm from './UserForm';
-// import {USER_SCHEMA} from './user-schema';
 import {styles} from './ValidatingInput';
 import Atom from './Atom';
 
@@ -24,7 +23,6 @@ const atom = window.atom = new Atom(initialState);
 const subStream = (dataStream, ...path) =>
   flyd.map(data => data.getIn(path), dataStream);
 
-@elegant({statics: ['edit']})
 class App extends Component {
   constructor(props) {
     super(props);
