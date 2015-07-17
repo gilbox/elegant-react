@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 4000px;
+}
+input {
+  padding: 10px;
+  font-size: 18px;
+}
+
+.Image {
+  
+}
+
+.Box {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  margin: 20px;
+}
+.Box-inner {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+}

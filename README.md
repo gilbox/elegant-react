@@ -3,6 +3,8 @@
 Functional React Architecture inspired by [omniscient](http://omniscientjs.github.io/) and [browser.html](https://github.com/mozilla/browser.html/).
 Comments/suggestions/PRs are all welcome. This is still experimental.
 
+BTW, you might also find it useful to use this in conjunction with [react-derive](https://github.com/gilbox/react-derive). And check out [elegant-react-hot-demo](https://github.com/gilbox/elegant-react-hot-demo) which combines them.
+
 
 ## what is elegant-react?
 
@@ -149,6 +151,12 @@ Although it's not a hard dependency, the provided `subedit` function is known
 to work with `immutable-js`. If you wish to use a different immutable lib,
 just create your own subedit function and it should work.
 
+- subedit for [mori](http://swannodette.github.io/mori/) *(untested)*
+
+        const subedit = (edit, ...path) => transform =>
+            edit(state => mori.updateIn(state, path, transform));
+
+
 ## Run the examples
 
 Clone this repo, then:
@@ -177,11 +185,25 @@ Clone this repo, then:
 ## live examples
 
 - [Phone Input](http://gilbox.github.io/elegant-react/examples/phone-input-field/demo.html)
-- [Address Book w/"Store" streams](http://gilbox.github.io/elegant-react/examples/address-book-store-streams/demo.html)
+  A very simple example of how to use `elegant-react` and a functional approach to creating
+  an input component with custom formatting and masking rules.
+- [Address Book with Stream-based Plugins](http://gilbox.github.io/elegant-react/examples/address-book-store-streams/demo.html)
+  Demonstrates how to use streams to create an undo/redo plugin.
+  Introduces the concepts of `previousEditStream`, `editStream`, and `wiredStream` that allows a plugin to gain read and/or write
+  access only to specific parts of the application state.
 - [Scroll Spring Animation](http://gilbox.github.io/elegant-react/examples/scroll-spring-animation/demo.html)
+  Demonstrates how to use `react-springs` (or `react-animation`) and how to create a scroll
+  handling component using the same functional technique.
 - [Reorder Items](http://gilbox.github.io/elegant-react/examples/reorder-items/demo.html)
+  A very simple demo showing how to use `elegant-react`.
 - [Form Validation (wip)](http://gilbox.github.io/elegant-react/examples/form-validation/demo.html)
+  Demonstrates how to create a robust plugin to handle validating form fields with a
+  json scema using the `jjv` npm package. Also demonstrates how to compose
+  decorators by combining `@elegant` with `@validationDecorator`.
+- [Sticky](http://gilbox.github.io/elegant-react/examples/sticky/demo.html)
+  Make a `div` stick when the user scrolls the item past the top of the viewport.
 
+- **[elegant-react-hot-demo](https://github.com/gilbox/elegant-react-hot-demo)** - This github repo demonstrates stream-based plugins (with flyd), animation with react-motion, hot reload, and time-travel scrubbing.
 
 ## credit
 

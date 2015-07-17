@@ -32,7 +32,7 @@ export default function createElegantDecorator(React, debug) {
     };
   }
 
-  return optionsOrComponent =>
+  return (optionsOrComponent={}) =>
     (optionsOrComponent.prototype instanceof Component) ?
       decorator({})(optionsOrComponent) : decorator(optionsOrComponent); // Component : options
 }
