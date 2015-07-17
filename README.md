@@ -198,7 +198,8 @@ Clone this repo, then:
   Demonstrates how to create a robust plugin to handle validating form fields with a
   json scema using the `jjv` npm package. Also demonstrates how to compose
   decorators by combining `@elegant` with `@validationDecorator`.
-
+- [Sticky](http://gilbox.github.io/elegant-react/examples/sticky/demo.html)
+  Make a `div` stick when the user scrolls the item past the top of the viewport.
 
 - **[elegant-react-hot-demo](https://github.com/gilbox/elegant-react-hot-demo)** - This github repo demonstrates stream-based plugins (with flyd), animation with react-motion, hot reload, and time-travel scrubbing.
 
