@@ -3,6 +3,8 @@
 Functional React Architecture inspired by [omniscient](http://omniscientjs.github.io/) and [browser.html](https://github.com/mozilla/browser.html/).
 Comments/suggestions/PRs are all welcome. This is still experimental.
 
+BTW, you might also find it useful to use this in conjunction with [react-derive](https://github.com/gilbox/react-derive). And check out [elegant-react-hot-demo](https://github.com/gilbox/elegant-react-hot-demo) which combines them.
+
 
 ## what is elegant-react?
 
