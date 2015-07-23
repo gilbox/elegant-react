@@ -6,6 +6,8 @@ Comments/suggestions/PRs are all welcome. This is still experimental.
 BTW, you might also find it useful to use this in conjunction with [react-derive](https://github.com/gilbox/react-derive). And check out [elegant-react-hot-demo](https://github.com/gilbox/elegant-react-hot-demo) which combines them.
 
 
+#### [Documentation](http://gilbox.github.io/elegant-react/docs/README.md.html)
+
 ## what is elegant-react?
 
 `elegant-react` is an npm package. The source code for the npm package is in the `src/`
