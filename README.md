@@ -18,22 +18,22 @@ for the sake of simplicity, do not.
 
 The `elegant-react` npm package provides:
 
-  - A simple ES7 class decorator ([`@elegant-react`](https://github.com/gilbox/elegant-react/blob/master/src/create-elegant-decorator.js))
-    that via a higher-order component (HoC) facilitates working with immutable data:
+- A simple ES7 class decorator ([`@elegant-react`](https://github.com/gilbox/elegant-react/blob/master/src/create-elegant-decorator.js))
+  that via a higher-order component (HoC) facilitates working with immutable data:
 
-      * Automatically optimizes your shouldComponentUpdate. In order
-        for this optimization to be efficient, all props passed to components should be
-        scalar or immutable values. If you need to further optimize `shouldComponentUpdate`
-        you can define your own, and because the `@elegant` decorator is a HoC there's
-        no need to worry about collisions.
+  * Automatically optimizes your shouldComponentUpdate. In order
+    for this optimization to be efficient, all props passed to components should be
+    scalar or immutable values. If you need to further optimize `shouldComponentUpdate`
+    you can define your own, and because the `@elegant` decorator is a HoC there's
+    no need to worry about collisions.
 
-      * Allows designated props to be treated as *static* so that changes to those
-        props don't trigger render updates.
+  * Allows designated props to be treated as *static* so that changes to those
+    props don't trigger render updates.
 
-  - A simple [subedit](https://github.com/gilbox/elegant-react/blob/master/src/index.js#L4) function that looks like this:
+- A simple [subedit](https://github.com/gilbox/elegant-react/blob/master/src/index.js#L4) function that looks like this:
 
-          const subedit = (edit, ...path) => transform =>
-              edit(state => state.updateIn(path, transform));
+        const subedit = (edit, ...path) => transform =>
+            edit(state => state.updateIn(path, transform));
 
 
 ## about
