@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>app.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../", thisFile = "examples/sticky/app.js", defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>app.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kr">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span><span class="nx">Component</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;react&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">Scroll</span> <span class="nx">from</span> <span class="s1">&#39;./scroll&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">BoundingRect</span> <span class="nx">from</span> <span class="s1">&#39;./bounding-rect&#39;</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">containerHeight</span> <span class="o">=</span> <span class="s1">&#39;100px&#39;</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">styles</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">sticky</span><span class="o">:</span> <span class="p">{</span><span class="nx">position</span><span class="o">:</span> <span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="nx">top</span><span class="o">:</span> <span class="mi">0</span><span class="p">},</span>
+  <span class="nx">title</span><span class="o">:</span> <span class="p">{</span><span class="nx">marginBottom</span><span class="o">:</span> <span class="s1">&#39;100px&#39;</span><span class="p">},</span>
+  <span class="nx">container</span><span class="o">:</span> <span class="p">{</span> <span class="nx">width</span><span class="o">:</span> <span class="s1">&#39;100vw&#39;</span><span class="p">,</span> <span class="nx">height</span><span class="o">:</span> <span class="nx">containerHeight</span><span class="p">,</span> <span class="nx">overflow</span><span class="o">:</span> <span class="s1">&#39;hidden&#39;</span><span class="p">,</span> <span class="nx">position</span><span class="o">:</span> <span class="s1">&#39;relative&#39;</span> <span class="p">},</span>
+  <span class="nx">image</span><span class="o">:</span> <span class="p">{</span> <span class="nx">width</span><span class="o">:</span> <span class="s1">&#39;100%&#39;</span><span class="p">,</span> <span class="nx">minWidth</span><span class="o">:</span> <span class="s1">&#39;800px&#39;</span> <span class="p">},</span>
+  <span class="nx">boundingRect</span><span class="o">:</span> <span class="p">{</span> <span class="nx">height</span><span class="o">:</span> <span class="nx">containerHeight</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kr">class</span> <span class="nx">App</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span>  <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">h1</span> <span class="nx">style</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">title</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">The</span> <span class="nx">image</span> <span class="nx">is</span> <span class="nx">Sticky</span><span class="o">!&lt;</span><span class="err">/h1&gt;</span>
+      <span class="o">&lt;</span><span class="nx">Scroll</span><span class="o">&gt;</span><span class="p">{</span> <span class="nx">scrollTop</span> <span class="o">=&gt;</span>
+        <span class="o">&lt;</span><span class="nx">BoundingRect</span> <span class="nx">style</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">boundingRect</span><span class="p">}</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">rect</span> <span class="o">=&gt;</span>
+          <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=</span><span class="p">{{...</span><span class="nx">styles</span><span class="p">.</span><span class="nx">container</span><span class="p">,</span> <span class="p">...(</span><span class="nx">rect</span> <span class="o">&amp;&amp;</span> <span class="nx">rect</span><span class="p">.</span><span class="nx">top</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">styles</span><span class="p">.</span><span class="nx">sticky</span><span class="p">)}}</span><span class="o">&gt;</span>
+            <span class="o">&lt;</span><span class="nx">img</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;bg.jpg&quot;</span> <span class="nx">style</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">image</span><span class="p">}</span> <span class="o">/&gt;</span>
+          <span class="o">&lt;</span><span class="err">/div&gt;</span>
+        <span class="p">}</span><span class="o">&lt;</span><span class="err">/BoundingRect&gt;</span>
+      <span class="p">}</span><span class="o">&lt;</span><span class="err">/Scroll&gt;</span>
+
+      <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=</span><span class="p">{</span><span class="nx">styles</span><span class="p">.</span><span class="nx">moreStuff</span><span class="p">}</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span> <span class="nx">Wow</span> <span class="nx">wow</span> <span class="o">&lt;</span><span class="err">/h2&gt;</span>
+        <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>
+          <span class="nx">Lorem</span> <span class="nx">ipsum</span> <span class="nx">dolor</span> <span class="nx">sit</span> <span class="nx">amet</span><span class="p">,</span> <span class="nx">consectetur</span> <span class="nx">adipisicing</span> <span class="nx">elit</span><span class="p">,</span> <span class="nx">sed</span> <span class="k">do</span> <span class="nx">eiusmod</span> <span class="nx">tempor</span> <span class="nx">incididunt</span> <span class="nx">ut</span> <span class="nx">labore</span> <span class="nx">et</span> <span class="nx">dolore</span> <span class="nx">magna</span> <span class="nx">aliqua</span><span class="p">.</span> <span class="nx">Ut</span> <span class="nx">enim</span> <span class="nx">ad</span> <span class="nx">minim</span> <span class="nx">veniam</span><span class="p">,</span> <span class="nx">quis</span> <span class="nx">nostrud</span> <span class="nx">exercitation</span> <span class="nx">ullamco</span> <span class="nx">laboris</span> <span class="nx">nisi</span> <span class="nx">ut</span> <span class="nx">aliquip</span> <span class="nx">ex</span> <span class="nx">ea</span> <span class="nx">commodo</span> <span class="nx">consequat</span><span class="p">.</span> <span class="nx">Duis</span> <span class="nx">aute</span> <span class="nx">irure</span> <span class="nx">dolor</span> <span class="k">in</span> <span class="nx">reprehenderit</span> <span class="k">in</span> <span class="nx">voluptate</span> <span class="nx">velit</span> <span class="nx">esse</span> <span class="nx">cillum</span> <span class="nx">dolore</span> <span class="nx">eu</span> <span class="nx">fugiat</span> <span class="nx">nulla</span> <span class="nx">pariatur</span><span class="p">.</span> <span class="nx">Excepteur</span> <span class="nx">sint</span> <span class="nx">occaecat</span> <span class="nx">cupidatat</span> <span class="nx">non</span> <span class="nx">proident</span><span class="p">,</span> <span class="nx">sunt</span> <span class="k">in</span> <span class="nx">culpa</span> <span class="nx">qui</span> <span class="nx">officia</span> <span class="nx">deserunt</span> <span class="nx">mollit</span> <span class="nx">anim</span> <span class="nx">id</span> <span class="nx">est</span> <span class="nx">laborum</span><span class="p">.</span>
+        <span class="o">&lt;</span><span class="err">/p&gt;</span>
+      <span class="o">&lt;</span><span class="err">/div&gt;</span>
+    <span class="o">&lt;</span><span class="err">/div&gt;;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">React</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">App</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">));</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

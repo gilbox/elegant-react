@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>validate.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../../doc-style.css" />
+  <script src="../../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../../", thisFile = "examples/form-validation/validation/validate.js", defaultSidebar = true;
+  </script>
+  <script src="../../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>validate.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kr">import</span> <span class="p">{</span><span class="nx">fromJS</span><span class="p">,</span> <span class="nx">Map</span> <span class="nx">as</span> <span class="nx">IMap</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;immutable&#39;</span><span class="p">;</span>
+
+<span class="kr">export</span> <span class="kr">const</span> <span class="nx">VALUE_KEY</span> <span class="o">=</span> <span class="s1">&#39;_value_&#39;</span><span class="p">;</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>value is what we are validating</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kr">export</span> <span class="kr">const</span> <span class="nx">createValidatingValue</span> <span class="o">=</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">({</span> <span class="p">[</span><span class="nx">VALUE_KEY</span><span class="p">]</span><span class="o">:</span><span class="nx">value</span> <span class="p">});</span>
+
+<span class="kd">function</span> <span class="nx">getDataShapedForValidation</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">path</span><span class="o">=</span><span class="p">[],</span> <span class="nx">acc</span><span class="o">=</span><span class="nx">IMap</span><span class="p">())</span> <span class="p">{</span>
+  <span class="nx">data</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">v</span><span class="p">,</span><span class="nx">k</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">v</span><span class="p">.</span><span class="nx">get</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+    <span class="kr">const</span> <span class="nx">validatorPath</span> <span class="o">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;validatorPath&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">VALUE_KEY</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">acc</span> <span class="o">=</span> <span class="nx">acc</span><span class="p">.</span><span class="nx">setIn</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">k</span><span class="p">),</span> <span class="nx">v</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">VALUE_KEY</span><span class="p">));</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">acc</span> <span class="o">=</span> <span class="nx">getDataShapedForValidation</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="nx">path</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">k</span><span class="p">),</span> <span class="nx">acc</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="nx">acc</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">applyValidation</span><span class="p">(</span><span class="nx">errorMap</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">path</span><span class="o">=</span><span class="p">[])</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">subData</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">getIn</span><span class="p">(</span><span class="nx">path</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">subData</span> <span class="o">||</span> <span class="o">!</span><span class="nx">subData</span><span class="p">.</span><span class="nx">forEach</span><span class="p">)</span> <span class="k">return</span> <span class="nx">data</span><span class="p">;</span>
+
+  <span class="nx">subData</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">v</span><span class="p">,</span><span class="nx">key</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">v</span><span class="p">.</span><span class="nx">get</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+
+    <span class="kr">const</span> <span class="nx">subPath</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">VALUE_KEY</span><span class="p">))</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>todo: optimize with merge operation that prevents update when nothing has changed</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+      <span class="kr">const</span> <span class="nx">vPath</span> <span class="o">=</span> <span class="s1">&#39;data.&#39;</span> <span class="o">+</span> <span class="nx">subPath</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">);</span>
+      <span class="nx">data</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">setIn</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="s1">&#39;validation&#39;</span><span class="p">),</span> <span class="nx">errorMap</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">vPath</span><span class="p">));</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">data</span> <span class="o">=</span> <span class="nx">applyValidation</span><span class="p">(</span><span class="nx">errorMap</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">subPath</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="nx">data</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kr">export</span> <span class="kd">function</span> <span class="nx">validateWithSchema</span><span class="p">(</span><span class="nx">validate</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">dataToValidate</span> <span class="o">=</span> <span class="nx">getDataShapedForValidation</span><span class="p">(</span><span class="nx">data</span><span class="p">).</span><span class="nx">toJS</span><span class="p">();</span>
+
+  <span class="kr">const</span> <span class="nx">valid</span> <span class="o">=</span> <span class="nx">validate</span><span class="p">(</span><span class="nx">dataToValidate</span><span class="p">);</span>
+  <span class="kr">const</span> <span class="nx">errors</span> <span class="o">=</span> <span class="nx">valid</span> <span class="o">?</span> <span class="p">[]</span> <span class="o">:</span> <span class="nx">validate</span><span class="p">.</span><span class="nx">errors</span><span class="p">;</span>
+  <span class="kr">const</span> <span class="nx">errorMap</span> <span class="o">=</span> <span class="p">{};</span>
+  <span class="nx">errors</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">error</span> <span class="o">=&gt;</span> <span class="nx">errorMap</span><span class="p">[</span><span class="nx">error</span><span class="p">.</span><span class="nx">field</span><span class="p">]</span> <span class="o">=</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="nx">applyValidation</span><span class="p">(</span><span class="nx">fromJS</span><span class="p">(</span><span class="nx">errorMap</span><span class="p">),</span> <span class="nx">data</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

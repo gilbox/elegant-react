@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>README.md</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="doc-style.css" />
+  <script src="doc-filelist.js"></script>
+  <script>
+    var relativeDir = "", thisFile = "README.md", defaultSidebar = true;
+  </script>
+  <script src="doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+      <div class="heading h1">
+        <a href="#elegant-react">elegant-react</a>
+      </div>
+      <div class="heading h2">
+        <a href="#what%20is%20elegant-react%3F">what is elegant-react?</a>
+      </div>
+      <div class="heading h2">
+        <a href="#about">about</a>
+      </div>
+      <div class="heading h2">
+        <a href="#installation">Installation</a>
+      </div>
+      <div class="heading h2">
+        <a href="#bringing%20it%20into%20your%20project">Bringing it into your project</a>
+      </div>
+      <div class="heading h2">
+        <a href="#react-native%20support">react-native support</a>
+      </div>
+      <div class="heading h2">
+        <a href="#using%20in%20codepen%2C%20jsbin%2C%20etc.">Using in codepen, jsbin, etc.</a>
+      </div>
+      <div class="heading h2">
+        <a href="#usage">Usage</a>
+      </div>
+      <div class="heading h2">
+        <a href="#dependencies">dependencies</a>
+      </div>
+      <div class="heading h2">
+        <a href="#run%20the%20examples">Run the examples</a>
+      </div>
+      <div class="heading h2">
+        <a href="#differences%20from%20omniscient">differences from omniscient</a>
+      </div>
+      <div class="heading h2">
+        <a href="#live%20examples">live examples</a>
+      </div>
+      <div class="heading h2">
+        <a href="#credit">credit</a>
+      </div>
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="docs markdown">
+<div class="pilwrap" id="elegant-react">
+  <h1>
+    <a href="#elegant-react" name="elegant-react" class="pilcrow">&#182;</a>
+    elegant-react
+  </h1>
+</div>
+
+
+<p>Functional React Architecture inspired by <a href="http://omniscientjs.github.io/">omniscient</a> and <a href="https://github.com/mozilla/browser.html/">browser.html</a>.
+Comments/suggestions/PRs are all welcome. This is still experimental.</p>
+
+<p>BTW, you might also find it useful to use this in conjunction with <a href="https://github.com/gilbox/react-derive">react-derive</a>. And check out <a href="https://github.com/gilbox/elegant-react-hot-demo">elegant-react-hot-demo</a> which combines them.</p>
+
+
+<div class="pilwrap" id="what%20is%20elegant-react%3F">
+  <h2>
+    <a href="#what%20is%20elegant-react%3F" name="what%20is%20elegant-react%3F" class="pilcrow">&#182;</a>
+    what is elegant-react?
+  </h2>
+</div>
+
+
+<p><code>elegant-react</code> is an npm package. The source code for the npm package is in the <code>src/</code>
+directory of this repo.</p>
+
+<p>This github repo is also currently the home for a growing number of experiments
+related to React functional patterns. The code for these experiments
+live in the <code>examples/</code> dir. Some use the <code>elegant-react</code> npm package but others,
+for the sake of simplicity, do not.</p>
+
+<p>The <code>elegant-react</code> npm package provides:</p>
+
+<ul>
+<li><p>A simple ES7 class decorator (<a href="https://github.com/gilbox/elegant-react/blob/master/src/create-elegant-decorator.js"><code>@elegant-react</code></a>)
+that via a higher-order component (HoC) facilitates working with immutable data:</p>
+
+<ul><li><p>Automatically optimizes your shouldComponentUpdate. In order
+for this optimization to be efficient, all props passed to components should be
+scalar or immutable values. If you need to further optimize <code>shouldComponentUpdate</code>
+you can define your own, and because the <code>@elegant</code> decorator is a HoC there's
+no need to worry about collisions.</p></li>
+<li><p>Allows designated props to be treated as <em>static</em> so that changes to those
+props don't trigger render updates.</p></li></ul></li>
+<li><p>A simple <a href="https://github.com/gilbox/elegant-react/blob/master/src/index.js#L4">subedit</a> function that looks like this:</p></li>
+</ul>
+
+
+<div class="highlight"><pre><code>    <span class="kr">const</span> <span class="nx">subedit</span> <span class="o">=</span> <span class="p">(</span><span class="nx">edit</span><span class="p">,</span> <span class="p">...</span><span class="nx">path</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">transform</span> <span class="o">=&gt;</span>
+        <span class="nx">edit</span><span class="p">(</span><span class="nx">state</span> <span class="o">=&gt;</span> <span class="nx">state</span><span class="p">.</span><span class="nx">updateIn</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">transform</span><span class="p">));</span>
+</code></pre></div>
+
+
+
+
+<div class="pilwrap" id="about">
+  <h2>
+    <a href="#about" name="about" class="pilcrow">&#182;</a>
+    about
+  </h2>
+</div>
+
+
+<p>This repo started off as a demonstration of some concepts that I wrote about in <a href="https://medium.com/@gilbox/an-elegant-functional-architecture-for-react-faa3fb42b75b">this Medium article</a> and <a href="https://medium.com/p/7acf5d0cf00e">this one</a> as well. However, since that time elegant-react
+has continued to evolve and things have changed significantly. For the purpose of education,
+you can check out the <a href="https://github.com/gilbox/elegant-react">elegant-react-og</a> repo which
+is a copy of the elegant-react repo immediately before it began to diverge from the content
+in those two Medium articles.</p>
+
+
+<div class="pilwrap" id="installation">
+  <h2>
+    <a href="#installation" name="installation" class="pilcrow">&#182;</a>
+    Installation
+  </h2>
+</div>
+
+
+<p>Install via npm</p>
+
+
+<div class="highlight"><pre><code><span class="nx">npm</span> <span class="nx">install</span> <span class="nx">elegant</span><span class="o">-</span><span class="nx">react</span>
+</code></pre></div>
+
+
+
+
+<div class="pilwrap" id="bringing%20it%20into%20your%20project">
+  <h2>
+    <a href="#bringing%20it%20into%20your%20project" name="bringing%20it%20into%20your%20project" class="pilcrow">&#182;</a>
+    Bringing it into your project
+  </h2>
+</div>
+
+
+<p>Import it:</p>
+
+
+<div class="highlight"><pre><code><span class="kr">import</span> <span class="p">{</span><span class="nx">elegant</span><span class="p">,</span> <span class="nx">subedit</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;elegant-react&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+
+
+<p>Or if you'd like to enable debug mode:</p>
+
+
+<div class="highlight"><pre><code><span class="kr">import</span> <span class="nx">ElegantReact</span> <span class="nx">from</span> <span class="s1">&#39;elegant-react&#39;</span><span class="p">;</span>
+<span class="kr">const</span> <span class="p">{</span><span class="nx">elegant</span><span class="p">,</span> <span class="nx">subedit</span><span class="p">}</span> <span class="o">=</span> <span class="nx">ElegantReact</span><span class="p">({</span><span class="nx">debug</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+</code></pre></div>
+
+
+
+<p>Note: the <code>subedit</code> function is also available as <code>sub</code>. It's a personal
+preference which you use. I like the way that <code>sub(edit, 'foo')</code> reads.</p>
+
+
+<div class="pilwrap" id="react-native%20support">
+  <h2>
+    <a href="#react-native%20support" name="react-native%20support" class="pilcrow">&#182;</a>
+    react-native support
+  </h2>
+</div>
+
+
+<p>Require it:</p>
+
+
+<div class="highlight"><pre><code><span class="kr">import</span> <span class="p">{</span><span class="nx">elegant</span><span class="p">,</span> <span class="nx">subedit</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;elegant-react/native&#39;</span><span class="p">;</span>
+</code></pre></div>
+
+
+
+<p>Or if you'd like to enable debug mode:</p>
+
+
+<div class="highlight"><pre><code><span class="kr">import</span> <span class="nx">ElegantReact</span> <span class="nx">from</span> <span class="s1">&#39;elegant-react/native&#39;</span><span class="p">;</span>
+<span class="kr">const</span> <span class="p">{</span><span class="nx">elegant</span><span class="p">,</span> <span class="nx">subedit</span><span class="p">}</span> <span class="o">=</span> <span class="nx">ElegantReact</span><span class="p">({</span><span class="nx">debug</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+</code></pre></div>
+
+
+
+
+<div class="pilwrap" id="using%20in%20codepen%2C%20jsbin%2C%20etc.">
+  <h2>
+    <a href="#using%20in%20codepen%2C%20jsbin%2C%20etc." name="using%20in%20codepen%2C%20jsbin%2C%20etc." class="pilcrow">&#182;</a>
+    Using in codepen, jsbin, etc.
+  </h2>
+</div>
+
+
+<p>Add the script:</p>
+
+
+<div class="highlight"><pre><code><span class="c1">//rawgit.com/gilbox/elegant-react/master/build/global/elegant-react.js</span>
+</code></pre></div>
+
+
+
+<p>This exposes the global object <code>ElegantReact</code>.</p>
+
+
+<div class="highlight"><pre><code><span class="kr">const</span> <span class="p">{</span><span class="nx">elegant</span><span class="p">,</span> <span class="nx">subedit</span><span class="p">}</span> <span class="o">=</span> <span class="nx">ElegantReact</span><span class="p">;</span>
+</code></pre></div>
+
+
+
+<p>Or if you'd like to enable <code>debug</code> mode:</p>
+
+
+<div class="highlight"><pre><code><span class="kr">const</span> <span class="p">{</span><span class="nx">elegant</span><span class="p">,</span> <span class="nx">subedit</span><span class="p">}</span> <span class="o">=</span> <span class="nx">ElegantReact</span><span class="p">({</span><span class="nx">debug</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+</code></pre></div>
+
+
+
+
+<div class="pilwrap" id="usage">
+  <h2>
+    <a href="#usage" name="usage" class="pilcrow">&#182;</a>
+    Usage
+  </h2>
+</div>
+
+
+<p>First, make sure you understand the <code>subedit</code> (aka <code>sub</code>) function described in
+<a href="https://medium.com/@gilbox/an-elegant-functional-architecture-for-react-faa3fb42b75b">this Medium article</a></p>
+
+<p>Then add the <code>@elegant</code> decorator to your component, specifying which
+props are static.</p>
+
+
+<div class="highlight"><pre><code><span class="kr">const</span> <span class="nx">inc</span> <span class="o">=</span> <span class="nx">n</span> <span class="o">=&gt;</span> <span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">elegant</span><span class="p">({</span><span class="nx">statics</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;editValue&#39;</span><span class="p">]})</span>
+<span class="kr">class</span> <span class="nx">Item</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">item</span><span class="p">,</span><span class="nx">editValue</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+    <span class="kr">const</span> <span class="nx">onClick</span> <span class="o">=</span> <span class="nx">_</span> <span class="o">=&gt;</span> <span class="nx">editValue</span><span class="p">(</span><span class="nx">inc</span><span class="p">);</span>
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">li</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span> <span class="nx">onClick</span> <span class="p">}</span><span class="o">&gt;</span>
+      <span class="p">{</span> <span class="nx">item</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span> <span class="p">}</span> <span class="o">-</span> <span class="p">{</span> <span class="nx">item</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">)</span> <span class="p">}</span>
+    <span class="o">&lt;</span><span class="err">/li&gt;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+
+<p>Now put that component to use:</p>
+
+
+<div class="highlight"><pre><code><span class="kr">const</span> <span class="nx">reverse</span> <span class="o">=</span> <span class="nx">data</span> <span class="o">=&gt;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>
+
+<span class="err">@</span><span class="nx">elegant</span><span class="p">({</span><span class="nx">statics</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;edit&#39;</span><span class="p">]})</span>
+<span class="kr">class</span> <span class="nx">Items</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">items</span><span class="p">,</span><span class="nx">edit</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+
+    <span class="kr">const</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">items</span><span class="p">.</span><span class="nx">toArray</span><span class="p">().</span><span class="nx">map</span><span class="p">(</span>
+      <span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Item</span> <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">item</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)}</span>
+              <span class="nx">item</span><span class="o">=</span><span class="p">{</span><span class="nx">item</span><span class="p">}</span>
+              <span class="nx">editValue</span><span class="o">=</span><span class="p">{</span><span class="nx">sub</span><span class="p">(</span><span class="nx">edit</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span><span class="s1">&#39;value&#39;</span><span class="p">)}</span> <span class="o">/&gt;</span> <span class="p">);</span>
+
+    <span class="k">return</span>  <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">key</span><span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">_</span> <span class="o">=&gt;</span> <span class="nx">edit</span><span class="p">(</span><span class="nx">reverse</span><span class="p">)}</span><span class="o">&gt;</span><span class="nx">reverse</span><span class="o">&lt;</span><span class="err">/button&gt;</span>
+      <span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span><span class="p">{</span> <span class="nx">children</span> <span class="p">}</span><span class="o">&lt;</span><span class="err">/ul&gt;</span>
+    <span class="o">&lt;</span><span class="err">/div&gt;;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+
+
+<p>The rest of the source for this demo is <a href="https://github.com/gilbox/elegant-react/blob/master/examples/reorder-items/app.js">here</a>
+and you can <a href="http://gilbox.github.io/elegant-react/examples/reorder-items/demo.html">see it in action</a>
+as well.</p>
+
+
+<div class="pilwrap" id="dependencies">
+  <h2>
+    <a href="#dependencies" name="dependencies" class="pilcrow">&#182;</a>
+    dependencies
+  </h2>
+</div>
+
+
+<p>You might notice that elegant-react has no <code>dependencies</code> nor <code>peerDependencies</code>
+listed in it's package.json file. This is so it can support both react and react-native
+from the same npm package.</p>
+
+<p>Although it's not a hard dependency, the provided <code>subedit</code> function is known
+to work with <code>immutable-js</code>. If you wish to use a different immutable lib,
+just create your own subedit function and it should work.</p>
+
+<ul>
+<li>subedit for <a href="http://swannodette.github.io/mori/">mori</a> <em>(untested)</em></li>
+</ul>
+
+
+<div class="highlight"><pre><code>    <span class="kr">const</span> <span class="nx">subedit</span> <span class="o">=</span> <span class="p">(</span><span class="nx">edit</span><span class="p">,</span> <span class="p">...</span><span class="nx">path</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">transform</span> <span class="o">=&gt;</span>
+        <span class="nx">edit</span><span class="p">(</span><span class="nx">state</span> <span class="o">=&gt;</span> <span class="nx">mori</span><span class="p">.</span><span class="nx">updateIn</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">transform</span><span class="p">));</span>
+</code></pre></div>
+
+
+
+
+<div class="pilwrap" id="run%20the%20examples">
+  <h2>
+    <a href="#run%20the%20examples" name="run%20the%20examples" class="pilcrow">&#182;</a>
+    Run the examples
+  </h2>
+</div>
+
+
+<p>Clone this repo, then:</p>
+
+
+<div class="highlight"><pre><code><span class="nx">npm</span> <span class="nx">install</span>
+<span class="nx">npm</span> <span class="nx">run</span> <span class="nx">examples</span>
+</code></pre></div>
+
+
+
+<p>... and navigate to <a href="http://localhost:8080/webpack-dev-server/">http://localhost:8080/webpack-dev-server/</a></p>
+
+
+<div class="pilwrap" id="differences%20from%20omniscient">
+  <h2>
+    <a href="#differences%20from%20omniscient" name="differences%20from%20omniscient" class="pilcrow">&#182;</a>
+    differences from omniscient
+  </h2>
+</div>
+
+
+<ul>
+<li>elegant-react uses higher-order components where omniscient uses mixins</li>
+<li>elegant-react components use a decorator to specify which props are static while
+omniscient uses a single prop called <code>statics</code>.</li>
+<li>omniscient will perform deep comparisons on props of any type with <code>lodash.isequal</code>,
+elegant-react only performs shallow comparison assuming that if you need deep comparison
+you will use immutable objects or define your own <code>shouldComponentUpdate</code></li>
+<li>elegant-react uses idiomatic react approach (<a href="https://medium.com/p/7acf5d0cf00e">see this article</a> for more info)</li>
+<li>omniscient supports components as function without JSX</li>
+<li>omniscient supports cursors</li>
+<li>omniscient is battle-tested</li>
+<li>omniscient is unit-tested</li>
+<li>omniscient is ~18kb minified. elegant-react is ~4kb</li>
+</ul>
+
+
+<div class="pilwrap" id="live%20examples">
+  <h2>
+    <a href="#live%20examples" name="live%20examples" class="pilcrow">&#182;</a>
+    live examples
+  </h2>
+</div>
+
+
+<ul>
+<li><a href="http://gilbox.github.io/elegant-react/examples/phone-input-field/demo.html">Phone Input</a>
+A very simple example of how to use <code>elegant-react</code> and a functional approach to creating
+an input component with custom formatting and masking rules.</li>
+<li><a href="http://gilbox.github.io/elegant-react/examples/address-book-store-streams/demo.html">Address Book with Stream-based Plugins</a>
+Demonstrates how to use streams to create an undo/redo plugin.
+Introduces the concepts of <code>previousEditStream</code>, <code>editStream</code>, and <code>wiredStream</code> that allows a plugin to gain read and/or write
+access only to specific parts of the application state.</li>
+<li><a href="http://gilbox.github.io/elegant-react/examples/scroll-spring-animation/demo.html">Scroll Spring Animation</a>
+Demonstrates how to use <code>react-springs</code> (or <code>react-animation</code>) and how to create a scroll
+handling component using the same functional technique.</li>
+<li><a href="http://gilbox.github.io/elegant-react/examples/reorder-items/demo.html">Reorder Items</a>
+A very simple demo showing how to use <code>elegant-react</code>.</li>
+<li><a href="http://gilbox.github.io/elegant-react/examples/form-validation/demo.html">Form Validation (wip)</a>
+Demonstrates how to create a robust plugin to handle validating form fields with a
+json scema using the <code>jjv</code> npm package. Also demonstrates how to compose
+decorators by combining <code>@elegant</code> with <code>@validationDecorator</code>.</li>
+<li><p><a href="http://gilbox.github.io/elegant-react/examples/sticky/demo.html">Sticky</a>
+Make a <code>div</code> stick when the user scrolls the item past the top of the viewport.</p></li>
+<li><p><strong><a href="https://github.com/gilbox/elegant-react-hot-demo">elegant-react-hot-demo</a></strong> - This github repo demonstrates stream-based plugins (with flyd), animation with react-motion, hot reload, and time-travel scrubbing.</p></li>
+</ul>
+
+
+<div class="pilwrap" id="credit">
+  <h2>
+    <a href="#credit" name="credit" class="pilcrow">&#182;</a>
+    credit
+  </h2>
+</div>
+
+
+<p>This project was originally a simplified version of <a href="http://omniscientjs.github.io/">omniscient</a>
+which promotes the functional approach of <a href="https://github.com/mozilla/browser.html/">browser.html</a>.
+However, it has since evolved to become a more unique thing of it's own (see <em>differences from omniscient</em> above)</p></div>
+  </div>
+</body>
+</html>

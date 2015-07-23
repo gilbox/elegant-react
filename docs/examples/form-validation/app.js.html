@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>app.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../", thisFile = "examples/form-validation/app.js", defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>app.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kr">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span><span class="nx">Component</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;react&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">ElegantReact</span> <span class="nx">from</span> <span class="s1">&#39;elegant-react&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span><span class="nx">fromJS</span><span class="p">,</span> <span class="nx">Map</span> <span class="nx">as</span> <span class="nx">IMap</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;immutable&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">flyd</span><span class="p">,</span> <span class="p">{</span><span class="nx">on</span><span class="p">,</span> <span class="nx">stream</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;flyd&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span><span class="nx">createValidatingValue</span><span class="p">,</span>
+        <span class="nx">createValidationPlugin</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./validation/&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">UserForm</span> <span class="nx">from</span> <span class="s1">&#39;./UserForm&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span><span class="nx">styles</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./ValidatingInput&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">Atom</span> <span class="nx">from</span> <span class="s1">&#39;./Atom&#39;</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="p">{</span><span class="nx">elegant</span><span class="p">,</span> <span class="nx">sub</span><span class="p">}</span> <span class="o">=</span> <span class="nx">ElegantReact</span><span class="p">({</span><span class="nx">debug</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+
+<span class="kr">const</span> <span class="nx">initialState</span> <span class="o">=</span> <span class="nx">fromJS</span><span class="p">({</span>
+  <span class="nx">userForm</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">name</span><span class="o">:</span> <span class="nx">createValidatingValue</span><span class="p">(</span><span class="s1">&#39;joe shmoe&#39;</span><span class="p">),</span>
+    <span class="nx">phone</span><span class="o">:</span> <span class="nx">createValidatingValue</span><span class="p">(</span><span class="s1">&#39;6665552222&#39;</span><span class="p">),</span>
+    <span class="nx">age</span><span class="o">:</span> <span class="nx">createValidatingValue</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kr">const</span> <span class="nx">atom</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">atom</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Atom</span><span class="p">(</span><span class="nx">initialState</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">subStream</span> <span class="o">=</span> <span class="p">(</span><span class="nx">dataStream</span><span class="p">,</span> <span class="p">...</span><span class="nx">path</span><span class="p">)</span> <span class="o">=&gt;</span>
+  <span class="nx">flyd</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">data</span> <span class="o">=&gt;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">getIn</span><span class="p">(</span><span class="nx">path</span><span class="p">),</span> <span class="nx">dataStream</span><span class="p">);</span>
+
+<span class="kr">class</span> <span class="nx">App</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">atom</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">edit</span> <span class="o">=</span> <span class="o">::</span><span class="nx">atom</span><span class="p">.</span><span class="nx">updateState</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="nx">state</span><span class="o">:</span> <span class="nx">atom</span><span class="p">.</span><span class="nx">getState</span><span class="p">()};</span>
+  <span class="p">}</span>
+
+  <span class="nx">componentWillMount</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">atom</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+    <span class="nx">on</span><span class="p">(</span><span class="nx">state</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">state</span><span class="p">}),</span> <span class="nx">atom</span><span class="p">.</span><span class="nx">didSetState$</span><span class="p">);</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>createValidationPlugin( {validate: ....,
+                         state$: subStream(atom.didUpdateState$, 'userForm'),
+                         output: sub(::atom.silentlyUpdateState, 'userForm')} );</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">state</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">;</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">edit</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+    <span class="k">return</span>  <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Validation</span> <span class="nx">Demo</span><span class="o">&lt;</span><span class="err">/h1&gt;</span>
+      <span class="o">&lt;</span><span class="nx">UserForm</span>
+        <span class="nx">data</span><span class="o">=</span><span class="p">{</span><span class="nx">state</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;userForm&#39;</span><span class="p">)}</span>
+        <span class="nx">editUser</span><span class="o">=</span><span class="p">{</span><span class="nx">sub</span><span class="p">(</span><span class="nx">edit</span><span class="p">,</span> <span class="s1">&#39;userForm&#39;</span><span class="p">)}</span> <span class="o">/&gt;</span>
+
+      <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">When</span> <span class="nx">a</span> <span class="nx">field</span> <span class="nx">is</span> <span class="o">&lt;</span><span class="nx">b</span><span class="o">&gt;</span><span class="nx">dirty</span><span class="o">&lt;</span><span class="err">/b&gt; there is a &lt;span style={styles.dirty}&gt;blue&lt;/span&gt; border.&lt;/p&gt;</span>
+      <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">When</span> <span class="nx">a</span> <span class="nx">field</span> <span class="nx">is</span> <span class="o">&lt;</span><span class="nx">b</span><span class="o">&gt;</span><span class="nx">invalid</span><span class="o">&lt;</span><span class="err">/b&gt; there is a &lt;span style={styles.invalid}&gt;red&lt;/span&gt; border.&lt;/p&gt;</span>
+    <span class="o">&lt;</span><span class="err">/div&gt;;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="nx">React</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">App</span> <span class="nx">atom</span><span class="o">=</span><span class="p">{</span><span class="nx">atom</span><span class="p">}</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">));</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

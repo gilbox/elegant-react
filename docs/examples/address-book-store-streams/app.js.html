@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>app.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../", thisFile = "examples/address-book-store-streams/app.js", defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>app.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kr">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span><span class="nx">Component</span><span class="p">,</span> <span class="nx">PropTypes</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;react&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">ElegantReact</span> <span class="nx">from</span> <span class="s1">&#39;elegant-react&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span><span class="nx">fromJS</span><span class="p">,</span> <span class="nx">List</span><span class="p">,</span> <span class="nx">Map</span> <span class="nx">as</span> <span class="nx">IMap</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;immutable&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">flyd</span><span class="p">,</span> <span class="p">{</span><span class="nx">stream</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;flyd&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span><span class="nx">createHistoryPlugin</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./history-plugin&#39;</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="p">{</span><span class="nx">elegant</span><span class="p">,</span> <span class="nx">sub</span><span class="p">}</span> <span class="o">=</span> <span class="nx">ElegantReact</span><span class="p">({</span><span class="nx">debug</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+
+<span class="kr">const</span> <span class="nx">newBlankEntry</span> <span class="o">=</span> <span class="nx">_</span> <span class="o">=&gt;</span> <span class="nx">fromJS</span><span class="p">({</span><span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">phone</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">});</span>
+
+<span class="kr">const</span> <span class="nx">initialState</span> <span class="o">=</span> <span class="nx">fromJS</span><span class="p">({</span>
+  <span class="nx">newEntry</span><span class="o">:</span> <span class="nx">newBlankEntry</span><span class="p">(),</span>
+  <span class="nx">entriesHistoryCount</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="nx">nameHistoryCount</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="nx">phoneHistoryCount</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="nx">entries</span><span class="o">:</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;aria&#39;</span><span class="p">,</span> <span class="nx">phone</span><span class="o">:</span> <span class="s1">&#39;3332221111&#39;</span><span class="p">},</span>
+    <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;gilbox&#39;</span><span class="p">,</span> <span class="nx">phone</span><span class="o">:</span> <span class="s1">&#39;6665552222&#39;</span><span class="p">},</span>
+    <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;jimbo&#39;</span><span class="p">,</span> <span class="nx">phone</span><span class="o">:</span> <span class="s1">&#39;9993332222&#39;</span><span class="p">},</span>
+    <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;lebowski&#39;</span><span class="p">,</span> <span class="nx">phone</span><span class="o">:</span> <span class="s1">&#39;7774442222&#39;</span><span class="p">},</span>
+    <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;murphy&#39;</span><span class="p">,</span> <span class="nx">phone</span><span class="o">:</span> <span class="s1">&#39;8884442222&#39;</span><span class="p">},</span>
+    <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;vanderbilt&#39;</span><span class="p">,</span> <span class="nx">phone</span><span class="o">:</span> <span class="s1">&#39;9993332222&#39;</span><span class="p">},</span>
+  <span class="p">]</span>
+<span class="p">});</span>
+
+<span class="kr">const</span> <span class="nx">parseName</span> <span class="o">=</span> <span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">v</span> <span class="o">&amp;&amp;</span> <span class="nx">v</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\d/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">identity</span> <span class="o">=</span> <span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">v</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">parsePhone</span> <span class="o">=</span> <span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">v</span> <span class="o">&amp;&amp;</span> <span class="nx">v</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\D/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">formatPhone</span> <span class="o">=</span> <span class="nx">p</span> <span class="o">=&gt;</span> <span class="nx">p</span> <span class="o">&amp;&amp;</span>
+<span class="p">[</span><span class="nx">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="nx">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="nx">p</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">9</span><span class="p">]]</span>
+  <span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/-+$/</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="err">@</span><span class="nx">elegant</span><span class="p">({</span><span class="nx">statics</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;edit&#39;</span><span class="p">]})</span>
+<span class="kr">class</span> <span class="nx">FormattedInput</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="nx">propTypes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">edit</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+    <span class="nx">parser</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+    <span class="nx">formatter</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">string</span><span class="p">.</span><span class="nx">isRequired</span>
+  <span class="p">}</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">value</span><span class="p">,</span> <span class="nx">formatter</span><span class="p">,</span> <span class="nx">parser</span><span class="p">,</span> <span class="nx">edit</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">input</span> <span class="p">{...</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">}</span>
+        <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="nx">formatter</span><span class="p">(</span><span class="nx">value</span><span class="p">)}</span>
+        <span class="nx">onChange</span><span class="o">=</span><span class="p">{</span> <span class="nx">event</span> <span class="o">=&gt;</span>
+          <span class="nx">edit</span><span class="p">(</span><span class="nx">value</span> <span class="o">=&gt;</span> <span class="nx">parser</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">))</span> <span class="p">}</span> <span class="o">/&gt;</span>
+    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-2" id="section-2">&#182;</a>
+</div>
+<p>input field that only allows 10 digits, and formats like XXX-XXX-XXXX</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="err">@</span><span class="nx">elegant</span><span class="p">({</span><span class="nx">statics</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;editPhone&#39;</span><span class="p">]})</span>
+<span class="kr">class</span> <span class="nx">PhoneInput</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="nx">propTypes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">editPhone</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">string</span><span class="p">.</span><span class="nx">isRequired</span>
+  <span class="p">}</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">value</span><span class="p">,</span> <span class="nx">editPhone</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">FormattedInput</span> <span class="p">{...</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">}</span>
+        <span class="nx">placeholder</span><span class="o">=</span><span class="s2">&quot;Phone Number&quot;</span>
+        <span class="nx">formatter</span><span class="o">=</span><span class="p">{</span><span class="nx">formatPhone</span><span class="p">}</span>
+        <span class="nx">parser</span><span class="o">=</span><span class="p">{</span><span class="nx">parsePhone</span><span class="p">}</span>
+        <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="nx">value</span><span class="p">}</span>
+        <span class="nx">edit</span><span class="o">=</span><span class="p">{</span><span class="nx">editPhone</span><span class="p">}</span> <span class="o">/&gt;</span>
+    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-3" id="section-3">&#182;</a>
+</div>
+<p>input field that disallows digits</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="err">@</span><span class="nx">elegant</span><span class="p">({</span><span class="nx">statics</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;editName&#39;</span><span class="p">]})</span>
+<span class="kr">class</span> <span class="nx">NameInput</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="nx">propTypes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">editName</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">string</span><span class="p">.</span><span class="nx">isRequired</span>
+  <span class="p">}</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">value</span><span class="p">,</span> <span class="nx">editName</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">FormattedInput</span> <span class="p">{...</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">}</span>
+        <span class="nx">placeholder</span><span class="o">=</span><span class="s2">&quot;Name&quot;</span>
+        <span class="nx">formatter</span><span class="o">=</span><span class="p">{</span><span class="nx">identity</span><span class="p">}</span>
+        <span class="nx">parser</span><span class="o">=</span><span class="p">{</span><span class="nx">parseName</span><span class="p">}</span>
+        <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="nx">value</span><span class="p">}</span>
+        <span class="nx">edit</span><span class="o">=</span><span class="p">{</span><span class="nx">editName</span><span class="p">}</span> <span class="o">/&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-4" id="section-4">&#182;</a>
+</div>
+<p>a single phone book entry</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="err">@</span><span class="nx">elegant</span><span class="p">({</span><span class="nx">statics</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;deleteEntry&#39;</span><span class="p">]})</span>
+<span class="kr">class</span> <span class="nx">Entry</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="nx">propTypes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">deleteEntry</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+    <span class="nx">entry</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">IMap</span><span class="p">).</span><span class="nx">isRequired</span>
+  <span class="p">}</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">entry</span><span class="p">,</span> <span class="nx">deleteEntry</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;Entry&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">deleteEntry</span><span class="p">}</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;Entry-delete&quot;</span><span class="o">&gt;</span><span class="err">×</span><span class="o">&lt;</span><span class="err">/div&gt;</span>
+        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;Entry-name&quot;</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">entry</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)}</span><span class="o">&lt;</span><span class="err">/div&gt;</span>
+        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;Entry-phone&quot;</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">formatPhone</span><span class="p">(</span><span class="nx">entry</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;phone&#39;</span><span class="p">))}</span><span class="o">&lt;</span><span class="err">/div&gt;</span>
+      <span class="o">&lt;</span><span class="err">/div&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-5" id="section-5">&#182;</a>
+</div>
+<p>grid of phone book entries</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="err">@</span><span class="nx">elegant</span><span class="p">({</span><span class="nx">statics</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;editEntries&#39;</span><span class="p">]})</span>
+<span class="kr">class</span> <span class="nx">Entries</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="nx">propTypes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">editEntries</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+    <span class="nx">entries</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">List</span><span class="p">).</span><span class="nx">isRequired</span>
+  <span class="p">}</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">entries</span><span class="p">,</span> <span class="nx">editEntries</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;Entries&quot;</span><span class="o">&gt;</span>
+        <span class="p">{</span><span class="nx">entries</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">entry</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="o">=&gt;</span>
+            <span class="o">&lt;</span><span class="nx">Entry</span>
+              <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="err">`</span><span class="nx">$</span><span class="p">{</span><span class="nx">entry</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;phone&#39;</span><span class="p">)}</span><span class="nx">$</span><span class="p">{</span><span class="nx">entry</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)}</span><span class="err">`</span><span class="p">}</span>
+              <span class="nx">entry</span><span class="o">=</span><span class="p">{</span><span class="nx">entry</span><span class="p">}</span>
+              <span class="nx">deleteEntry</span><span class="o">=</span><span class="p">{</span><span class="nx">_</span><span class="o">=&gt;</span>
+                <span class="nx">editEntries</span><span class="p">(</span><span class="nx">entries</span> <span class="o">=&gt;</span> <span class="nx">entries</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="nx">index</span><span class="p">))}</span> <span class="o">/&gt;</span>
+        <span class="p">).</span><span class="nx">toArray</span><span class="p">()}</span>
+      <span class="o">&lt;</span><span class="err">/div&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">handleEvent</span> <span class="o">=</span> <span class="nx">handler</span> <span class="o">=&gt;</span> <span class="nx">event</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">handler</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+  <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-6" id="section-6">&#182;</a>
+</div>
+<p>Form for creating a new phone book entry</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="err">@</span><span class="nx">elegant</span><span class="p">({</span><span class="nx">statics</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;edit&#39;</span><span class="p">,</span> <span class="s1">&#39;addNewEntry&#39;</span><span class="p">,</span> <span class="s1">&#39;nameUndo&#39;</span><span class="p">,</span> <span class="s1">&#39;phoneUndo&#39;</span><span class="p">]})</span>
+<span class="kr">class</span> <span class="nx">NewEntry</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="nx">propTypes</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">edit</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+    <span class="nx">addNewEntry</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+    <span class="nx">nameUndo</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+    <span class="nx">phoneUndo</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">func</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+    <span class="nx">data</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">instanceOf</span><span class="p">(</span><span class="nx">IMap</span><span class="p">).</span><span class="nx">isRequired</span><span class="p">,</span>
+    <span class="nx">nameHistoryCount</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">number</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+    <span class="nx">phoneHistoryCount</span><span class="o">:</span> <span class="nx">PropTypes</span><span class="p">.</span><span class="nx">number</span><span class="p">.</span><span class="nx">isRequired</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">data</span><span class="p">,</span> <span class="nx">nameHistoryCount</span><span class="p">,</span> <span class="nx">phoneHistoryCount</span><span class="p">,</span>
+           <span class="nx">edit</span><span class="p">,</span> <span class="nx">addNewEntry</span><span class="p">,</span> <span class="nx">nameUndo</span><span class="p">,</span> <span class="nx">phoneUndo</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">form</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;NewEntry&quot;</span> <span class="nx">onSubmit</span><span class="o">=</span><span class="p">{</span><span class="nx">handleEvent</span><span class="p">(</span><span class="nx">addNewEntry</span><span class="p">)}</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;NewEntry-title&quot;</span><span class="o">&gt;</span><span class="nx">ADD</span> <span class="nx">NEW</span><span class="o">&lt;</span><span class="err">/div&gt;</span>
+        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;InputWrap&quot;</span><span class="o">&gt;</span>
+          <span class="p">{</span><span class="nx">nameHistoryCount</span> <span class="o">?</span> <span class="o">&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;#&quot;</span>
+            <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">handleEvent</span><span class="p">(</span><span class="nx">nameUndo</span><span class="p">)}</span>
+            <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;InputUndoBtn&quot;</span><span class="o">&gt;</span><span class="err">⎌</span><span class="o">&lt;</span><span class="err">/a&gt; : null}</span>
+          <span class="o">&lt;</span><span class="nx">NameInput</span>
+            <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;NewEntry-name&quot;</span>
+            <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="nx">data</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)}</span>
+            <span class="nx">editName</span><span class="o">=</span><span class="p">{</span><span class="nx">sub</span><span class="p">(</span><span class="nx">edit</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="err">/div&gt;</span>
+        <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;InputWrap&quot;</span><span class="o">&gt;</span>
+          <span class="p">{</span><span class="nx">phoneHistoryCount</span> <span class="o">?</span> <span class="o">&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;#&quot;</span>
+            <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">handleEvent</span><span class="p">(</span><span class="nx">phoneUndo</span><span class="p">)}</span>
+            <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;InputUndoBtn&quot;</span><span class="o">&gt;</span><span class="err">⎌</span><span class="o">&lt;</span><span class="err">/a&gt; : null}</span>
+          <span class="o">&lt;</span><span class="nx">PhoneInput</span>
+            <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;NewEntry-phone&quot;</span>
+            <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="nx">data</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;phone&#39;</span><span class="p">)}</span>
+            <span class="nx">editPhone</span><span class="o">=</span><span class="p">{</span><span class="nx">sub</span><span class="p">(</span><span class="nx">edit</span><span class="p">,</span> <span class="s1">&#39;phone&#39;</span><span class="p">)}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="err">/div&gt;</span>
+        <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">style</span><span class="o">=</span><span class="p">{{</span><span class="nx">display</span><span class="o">:</span> <span class="s1">&#39;none&#39;</span><span class="p">}}</span> <span class="o">/&gt;</span>
+      <span class="o">&lt;</span><span class="err">/form&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">pushNewEntry</span> <span class="o">=</span> <span class="nx">edit</span> <span class="o">=&gt;</span>
+  <span class="nx">edit</span><span class="p">(</span><span class="nx">data</span> <span class="o">=&gt;</span>
+    <span class="nx">data</span><span class="p">.</span><span class="nx">getIn</span><span class="p">([</span><span class="s1">&#39;newEntry&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">])</span> <span class="o">&amp;&amp;</span>
+      <span class="nx">data</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="s1">&#39;entries&#39;</span><span class="p">,</span>
+          <span class="nx">entries</span> <span class="o">=&gt;</span>
+            <span class="nx">entries</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;newEntry&#39;</span><span class="p">))</span>
+                   <span class="p">.</span><span class="nx">sortBy</span><span class="p">(</span><span class="nx">entry</span> <span class="o">=&gt;</span> <span class="nx">entry</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)))</span>
+          <span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="s1">&#39;newEntry&#39;</span><span class="p">,</span> <span class="nx">newBlankEntry</span><span class="p">));</span>
+
+<span class="err">@</span><span class="nx">elegant</span><span class="p">({</span><span class="nx">statics</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;edit&#39;</span><span class="p">,</span> <span class="s1">&#39;nameUndo&#39;</span><span class="p">,</span> <span class="s1">&#39;phoneUndo&#39;</span><span class="p">,</span> <span class="s1">&#39;entriesUndo&#39;</span><span class="p">]})</span>
+<span class="kr">class</span> <span class="nx">App</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">data</span><span class="p">,</span>
+            <span class="nx">nameHistoryCount</span><span class="p">,</span>
+            <span class="nx">phoneHistoryCount</span><span class="p">,</span>
+            <span class="nx">entriesHistoryCount</span><span class="p">,</span>
+            <span class="nx">nameUndo</span><span class="p">,</span>
+            <span class="nx">phoneUndo</span><span class="p">,</span>
+            <span class="nx">entriesUndo</span><span class="p">,</span>
+            <span class="nx">edit</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Address</span> <span class="nx">Book</span> <span class="nx">Demo</span>
+          <span class="p">{</span><span class="nx">data</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;entriesHistoryCount&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="o">&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&quot;#&quot;</span>
+             <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">handleEvent</span><span class="p">(</span><span class="nx">entriesUndo</span><span class="p">)}</span>
+             <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;UndoBtn&quot;</span><span class="o">&gt;</span><span class="err">⎌</span><span class="o">&lt;</span><span class="err">/a&gt; : null}</span>
+        <span class="o">&lt;</span><span class="err">/h1&gt;</span>
+        <span class="o">&lt;</span><span class="nx">NewEntry</span>
+          <span class="nx">nameHistoryCount</span><span class="o">=</span><span class="p">{</span><span class="nx">data</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;nameHistoryCount&#39;</span><span class="p">)}</span>
+          <span class="nx">phoneHistoryCount</span><span class="o">=</span><span class="p">{</span><span class="nx">data</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;phoneHistoryCount&#39;</span><span class="p">)}</span>
+          <span class="nx">data</span><span class="o">=</span><span class="p">{</span><span class="nx">data</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;newEntry&#39;</span><span class="p">)}</span>
+          <span class="nx">nameUndo</span><span class="o">=</span><span class="p">{</span><span class="nx">nameUndo</span><span class="p">}</span>
+          <span class="nx">phoneUndo</span><span class="o">=</span><span class="p">{</span><span class="nx">phoneUndo</span><span class="p">}</span>
+          <span class="nx">edit</span><span class="o">=</span><span class="p">{</span><span class="nx">sub</span><span class="p">(</span><span class="nx">edit</span><span class="p">,</span> <span class="s1">&#39;newEntry&#39;</span><span class="p">)}</span>
+          <span class="nx">addNewEntry</span><span class="o">=</span><span class="p">{</span><span class="nx">_</span><span class="o">=&gt;</span> <span class="nx">pushNewEntry</span><span class="p">(</span><span class="nx">edit</span><span class="p">)}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Entries</span>
+          <span class="nx">entries</span><span class="o">=</span><span class="p">{</span><span class="nx">data</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;entries&#39;</span><span class="p">)}</span>
+          <span class="nx">editEntries</span><span class="o">=</span><span class="p">{</span><span class="nx">sub</span><span class="p">(</span><span class="nx">edit</span><span class="p">,</span> <span class="s1">&#39;entries&#39;</span><span class="p">)}</span> <span class="o">/&gt;</span>
+      <span class="o">&lt;</span><span class="err">/div&gt;</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">subStream</span> <span class="o">=</span> <span class="p">(</span><span class="nx">dataStream</span><span class="p">,</span> <span class="p">...</span><span class="nx">path</span><span class="p">)</span> <span class="o">=&gt;</span>
+  <span class="nx">flyd</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">data</span> <span class="o">=&gt;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">getIn</span><span class="p">(</span><span class="nx">path</span><span class="p">),</span> <span class="nx">dataStream</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">logstream</span> <span class="o">=</span> <span class="nx">s</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span> <span class="o">||</span> <span class="nx">stream</span><span class="p">();</span>
+  <span class="nx">flyd</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;stream:&#39;</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">toJS</span> <span class="o">?</span> <span class="nx">v</span><span class="p">.</span><span class="nx">toJS</span><span class="p">()</span> <span class="o">:</span> <span class="nx">v</span><span class="p">),</span> <span class="nx">s</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">s</span><span class="p">;</span>
+<span class="p">};</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-7" id="section-7">&#182;</a>
+</div>
+<p>the Renderer component manages the top-level app state.
+it also handles the undo history which takes a snapshot of
+the entire application state every time the 'entries' change</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+<span class="kr">class</span> <span class="nx">Renderer</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">data</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">initialState</span><span class="p">}</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-8" id="section-8">&#182;</a>
+</div>
+<p>create our streams...</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">editStream</span> <span class="o">=</span> <span class="nx">stream</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">previousEditStream</span> <span class="o">=</span> <span class="nx">stream</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">nameUndoActionStream</span> <span class="o">=</span> <span class="nx">stream</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">phoneUndoActionStream</span> <span class="o">=</span> <span class="nx">stream</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">entriesUndoActionStream</span> <span class="o">=</span> <span class="nx">stream</span><span class="p">();</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-9" id="section-9">&#182;</a>
+</div>
+<p>and connect the wires...</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+
+    <span class="kr">const</span> <span class="nx">wiredStream</span> <span class="o">=</span> <span class="o">::</span><span class="k">this</span><span class="p">.</span><span class="nx">wiredStream</span><span class="p">;</span>
+
+    <span class="nx">createHistoryPlugin</span><span class="p">(</span>
+      <span class="nx">subStream</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">previousEditStream</span><span class="p">,</span> <span class="s1">&#39;newEntry&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">),</span>
+      <span class="nx">subStream</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">editStream</span><span class="p">,</span> <span class="s1">&#39;newEntry&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">),</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">nameUndoActionStream</span><span class="p">,</span>
+      <span class="nx">wiredStream</span><span class="p">(</span><span class="s1">&#39;newEntry&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">),</span>
+      <span class="nx">wiredStream</span><span class="p">(</span><span class="s1">&#39;nameHistoryCount&#39;</span><span class="p">));</span>
+
+    <span class="nx">createHistoryPlugin</span><span class="p">(</span>
+      <span class="nx">subStream</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">previousEditStream</span><span class="p">,</span> <span class="s1">&#39;newEntry&#39;</span><span class="p">,</span> <span class="s1">&#39;phone&#39;</span><span class="p">),</span>
+      <span class="nx">subStream</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">editStream</span><span class="p">,</span> <span class="s1">&#39;newEntry&#39;</span><span class="p">,</span> <span class="s1">&#39;phone&#39;</span><span class="p">),</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">phoneUndoActionStream</span><span class="p">,</span>
+      <span class="nx">wiredStream</span><span class="p">(</span><span class="s1">&#39;newEntry&#39;</span><span class="p">,</span> <span class="s1">&#39;phone&#39;</span><span class="p">),</span>
+      <span class="nx">wiredStream</span><span class="p">(</span><span class="s1">&#39;phoneHistoryCount&#39;</span><span class="p">));</span>
+
+    <span class="nx">createHistoryPlugin</span><span class="p">(</span>
+      <span class="nx">subStream</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">previousEditStream</span><span class="p">,</span> <span class="s1">&#39;entries&#39;</span><span class="p">),</span>
+      <span class="nx">subStream</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">editStream</span><span class="p">,</span> <span class="s1">&#39;entries&#39;</span><span class="p">),</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">entriesUndoActionStream</span><span class="p">,</span>
+      <span class="nx">wiredStream</span><span class="p">(</span><span class="s1">&#39;entries&#39;</span><span class="p">),</span>
+      <span class="nx">wiredStream</span><span class="p">(</span><span class="s1">&#39;entriesHistoryCount&#39;</span><span class="p">));</span>
+  <span class="p">}</span>
+
+  <span class="nx">updateData</span><span class="p">(</span><span class="nx">transform</span><span class="p">)</span> <span class="p">{</span>
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-10" id="section-10">&#182;</a>
+</div>
+<p>this is necessary because this.state.data is updated asynchronously
+while this.data is always up-to-date immediately</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
+      <span class="nx">data</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">transform</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+
+
+</pre></div>
+        </td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-11" id="section-11">&#182;</a>
+</div>
+<p>returns a stream whose writes
+directly update application state</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre>
+  <span class="nx">wiredStream</span><span class="p">(...</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">stream</span><span class="p">();</span>
+    <span class="kr">const</span> <span class="nx">updateData</span> <span class="o">=</span> <span class="o">::</span><span class="k">this</span><span class="p">.</span><span class="nx">updateData</span><span class="p">;</span>
+
+    <span class="nx">flyd</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">newData</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">updateData</span><span class="p">(</span><span class="nx">data</span> <span class="o">=&gt;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">setIn</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">newData</span><span class="p">));</span>
+    <span class="p">},</span> <span class="nx">s</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">s</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nx">edit</span> <span class="p">(</span><span class="nx">transform</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">previousEditStream</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">updateData</span><span class="p">(</span><span class="nx">transform</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">editStream</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">App</span>
+      <span class="nx">data</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">data</span><span class="p">}</span>
+      <span class="nx">edit</span><span class="o">=</span><span class="p">{</span><span class="o">::</span><span class="k">this</span><span class="p">.</span><span class="nx">edit</span><span class="p">}</span>
+      <span class="nx">nameUndo</span><span class="o">=</span><span class="p">{</span><span class="nx">_</span><span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">nameUndoActionStream</span><span class="p">(</span><span class="mi">1</span><span class="p">)}</span>
+      <span class="nx">phoneUndo</span><span class="o">=</span><span class="p">{</span><span class="nx">_</span><span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">phoneUndoActionStream</span><span class="p">(</span><span class="mi">1</span><span class="p">)}</span>
+      <span class="nx">entriesUndo</span><span class="o">=</span><span class="p">{</span><span class="nx">_</span><span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">entriesUndoActionStream</span><span class="p">(</span><span class="mi">1</span><span class="p">)}</span> <span class="o">/&gt;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">React</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Renderer</span> <span class="nx">initialState</span><span class="o">=</span><span class="p">{</span><span class="nx">initialState</span><span class="p">}</span> <span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">));</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

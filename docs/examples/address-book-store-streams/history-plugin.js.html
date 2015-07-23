@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>history-plugin.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../", thisFile = "examples/address-book-store-streams/history-plugin.js", defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>history-plugin.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kr">import</span> <span class="nx">flyd</span><span class="p">,</span> <span class="p">{</span><span class="nx">stream</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;flyd&#39;</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">filterStream</span> <span class="o">=</span> <span class="p">(</span><span class="nx">predicate</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span> <span class="o">=&gt;</span>
+  <span class="nx">stream</span><span class="p">([</span><span class="nx">s</span><span class="p">],</span> <span class="p">(</span><span class="nx">self</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">predicate</span><span class="p">(</span><span class="nx">s</span><span class="p">()))</span> <span class="nx">self</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">val</span><span class="p">);</span>
+  <span class="p">});</span>
+
+<span class="kr">export</span> <span class="kr">const</span> <span class="nx">createHistoryPlugin</span> <span class="o">=</span>
+  <span class="p">(</span><span class="nx">previousStateStream</span><span class="p">,</span> <span class="nx">stateStream</span><span class="p">,</span> <span class="nx">undoStream</span><span class="p">,</span> <span class="nx">outputStream</span><span class="p">,</span> <span class="nx">outputCountStream</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">history</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="kr">const</span> <span class="nx">filteredStateStream</span> <span class="o">=</span>
+      <span class="nx">filterStream</span><span class="p">(</span><span class="nx">state</span> <span class="o">=&gt;</span> <span class="nx">state</span> <span class="o">!==</span> <span class="nx">previousStateStream</span><span class="p">(),</span> <span class="nx">stateStream</span><span class="p">);</span>
+
+    <span class="nx">flyd</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">state</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">outputCountStream</span><span class="p">(</span><span class="nx">history</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">previousStateStream</span><span class="p">()))</span>
+    <span class="p">},</span> <span class="nx">filteredStateStream</span><span class="p">);</span>
+
+    <span class="nx">flyd</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">undo</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">outputStream</span><span class="p">(</span><span class="nx">history</span><span class="p">.</span><span class="nx">pop</span><span class="p">());</span>
+      <span class="nx">outputCountStream</span><span class="p">(</span><span class="nx">history</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+    <span class="p">},</span> <span class="nx">undoStream</span><span class="p">);</span>
+  <span class="p">};</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ValidatingInput.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../../doc-style.css" />
+  <script src="../../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../../", thisFile = "examples/form-validation/ValidatingInput.js", defaultSidebar = true;
+  </script>
+  <script src="../../doc-script.js"></script>
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container"><div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+      <tr>
+        <td class="docs">
+          <h1>ValidatingInput.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+      <tr>
+        <td class="docs">
+<div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1">&#182;</a>
+</div>
+<p>todo:
+auto-selectable
+isDirty (done)
+isInvalid (done)
+isDisabled</p>
+        </td>
+        <td class="code highlight"><div class="highlight"><pre><span class="kr">import</span> <span class="nx">React</span><span class="p">,</span> <span class="p">{</span><span class="nx">Component</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;react&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">ElegantReact</span><span class="p">,</span> <span class="p">{</span><span class="nx">sub</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;elegant-react&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span><span class="nx">validationComponentDecorator</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./validation/&#39;</span>
+
+<span class="kr">export</span> <span class="kr">const</span> <span class="nx">styles</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">invalid</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">border</span><span class="o">:</span> <span class="s1">&#39;1px solid red&#39;</span>
+  <span class="p">},</span>
+  <span class="nx">dirty</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">border</span><span class="o">:</span> <span class="s1">&#39;1px solid blue&#39;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kr">const</span> <span class="p">{</span><span class="nx">elegant</span><span class="p">}</span> <span class="o">=</span> <span class="nx">ElegantReact</span><span class="p">({</span><span class="nx">debug</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+
+<span class="kr">const</span> <span class="nx">identity</span> <span class="o">=</span> <span class="nx">x</span> <span class="o">=&gt;</span> <span class="nx">x</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">elegant</span><span class="p">({</span><span class="nx">statics</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;edit&#39;</span><span class="p">]})</span>
+<span class="err">@</span><span class="nx">validationComponentDecorator</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">Input</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="kr">static</span> <span class="nx">defaultProps</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">formatter</span><span class="o">:</span> <span class="nx">identity</span><span class="p">,</span>
+    <span class="nx">parser</span><span class="o">:</span> <span class="nx">identity</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span><span class="nx">value</span><span class="p">,</span> <span class="nx">edit</span><span class="p">,</span> <span class="nx">isDirty</span><span class="p">,</span> <span class="nx">isInvalid</span><span class="p">,</span> <span class="nx">formatter</span><span class="p">,</span> <span class="nx">parser</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">input</span>
+        <span class="nx">style</span><span class="o">=</span><span class="p">{{</span> <span class="p">...(</span><span class="nx">isDirty</span> <span class="o">&amp;&amp;</span> <span class="nx">styles</span><span class="p">.</span><span class="nx">dirty</span><span class="p">),</span>
+                 <span class="p">...(</span><span class="nx">isDirty</span> <span class="o">&amp;&amp;</span> <span class="nx">isInvalid</span> <span class="o">&amp;&amp;</span> <span class="nx">styles</span><span class="p">.</span><span class="nx">invalid</span><span class="p">)</span> <span class="p">}}</span>
+        <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="nx">formatter</span><span class="p">(</span><span class="nx">value</span><span class="p">)}</span>
+        <span class="nx">onChange</span><span class="o">=</span><span class="p">{</span><span class="nx">event</span> <span class="o">=&gt;</span>
+          <span class="nx">edit</span><span class="p">(</span><span class="nx">value</span> <span class="o">=&gt;</span> <span class="nx">parser</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">))</span> <span class="p">}</span> <span class="o">/&gt;</span>
+    <span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">parsePhone</span> <span class="o">=</span> <span class="nx">v</span> <span class="o">=&gt;</span> <span class="nx">v</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\D/g</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">);</span>
+
+<span class="kr">const</span> <span class="nx">formatPhone</span> <span class="o">=</span> <span class="nx">p</span> <span class="o">=&gt;</span> <span class="nx">p</span> <span class="o">&amp;&amp;</span>
+  <span class="p">[</span><span class="nx">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="nx">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="nx">p</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span><span class="nx">p</span><span class="p">[</span><span class="mi">9</span><span class="p">]]</span>
+    <span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/-+$/</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="err">@</span><span class="nx">elegant</span><span class="p">({</span><span class="nx">statics</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;edit&#39;</span><span class="p">]})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">PhoneInput</span> <span class="kr">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">Input</span> <span class="p">{...</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">}</span> <span class="nx">formatter</span><span class="o">=</span><span class="p">{</span><span class="nx">formatPhone</span><span class="p">}</span> <span class="nx">parser</span><span class="o">=</span><span class="p">{</span><span class="nx">parsePhone</span><span class="p">}</span> <span class="o">/&gt;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+        </td>
+      </tr>
+  </tbody>
+</table>
+  </div>
+</body>
+</html>
