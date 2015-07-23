@@ -17,7 +17,8 @@
     "examples-build": "rm -rf examples/js && webpack --config examples/webpack.build.config.js",
     "test": "jsxhint . && karma start",
     "publish": "npm publish ./build/npm",
-    "prepush": "npm run examples-build"
+    "prepush": "npm run examples-build",
+    "docs": "docker -I -o ../elegant-react_gh-pages/docs/ -s yes -x build,node_modules,package-npm.js,webpack.config.js"
   },
   "authors": [
     "Gil Birman <birmangil@gmail.com> (http://gilbox.me/)"
