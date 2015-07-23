@@ -4,20 +4,29 @@ import {createStaticsMap, shallowEqualProps} from './shallow-equal-props';
 const getDisplayName = (Component) =>
   Component.displayName || Component.name || 'Component';
 
+/**
+ * ## createElegantDecorator
+ * @param {React} React
+ * @param {Boolean} debug
+ **/
 export default function createElegantDecorator(React, debug) {
   const {Component} = React;
 
   const decorator = ({statics}) => {
+    // create lookup map for statics
     const staticsMap = createStaticsMap(statics);
 
     return DecoratedComponent => class ElegantDecorator extends Component {
       static displayName = `Elegant(${getDisplayName(DecoratedComponent)})`;
       static DecoratedComponent = DecoratedComponent;
 
+      // optimize render by comparing old & new props
       shouldComponentUpdate(nextProps, nextState) {
         return !shallowEqualProps(this.props, nextProps, staticsMap)
       }
-
+      
+      // always update statics in case `shouldComponentUpdate`
+      // prevents re-render
       componentWillReceiveProps(newProps) {
         updateStatics(statics, this.decoratedProps, newProps)
       }
@@ -32,6 +41,7 @@ export default function createElegantDecorator(React, debug) {
     };
   }
 
+  // The decorator can optionally take options
   return (optionsOrComponent={}) =>
     (optionsOrComponent.prototype instanceof Component) ?
       decorator({})(optionsOrComponent) : decorator(optionsOrComponent); // Component : options

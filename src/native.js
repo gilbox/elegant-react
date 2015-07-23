@@ -1,3 +1,5 @@
+// This file is the entry-point for using elegant-react
+// with react-native
 import createElegantDecorator from './create-elegant-decorator';
 import React from 'react-native';
 
