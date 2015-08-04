@@ -158,6 +158,28 @@ just create your own subedit function and it should work.
         const subedit = (edit, ...path) => transform =>
             edit(state => mori.updateIn(state, path, transform));
 
+- subedit for [updeep](https://github.com/aaronjensen/updeep) 
+  There is a demo in the `examples/reorder-items-updeep/` dir. 
+  
+  (note: this function doesn't replace the `u` function from updeep. 
+  You can still use `u` in conjunction with `subedit` and benefit 
+  from the expressiveness of both)
+
+        const subedit = (edit, ...path) => {
+          const updates = {};
+          const lastIndex = path.length - 1;
+          let subUpdates = updates;
+          
+          path.forEach((p,index) => {
+            if (index === lastIndex) return;
+            subUpdates = subUpdates[p] = {};
+          });
+          
+          return xf => {
+            subUpdates[path[lastIndex]] = xf;
+            return edit(u(updates));
+          };
+        }
 
 ## Run the examples
 

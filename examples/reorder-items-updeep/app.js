@@ -5,6 +5,22 @@ import u from 'updeep';
 const immutable = u({});
 const {elegant} = ElegantReact({debug: true});
 
+const sub = (edit, ...path) => {
+  const updates = {};
+  const lastIndex = path.length - 1;
+  let subUpdates = updates;
+  
+  path.forEach((p,index) => {
+    if (index === lastIndex) return;
+    subUpdates = subUpdates[p] = {};
+  });
+
+  return xf => {
+    subUpdates[path[lastIndex]] = xf;
+    return edit(u(updates));
+  };
+}
+
 const initialState = immutable({
   items: [
     { name: 'one', value: 0 },
@@ -37,7 +53,7 @@ class Items extends Component {
       (item, index) =>
         <Item key={item.name}
               item={item}
-              editValue={ xf => edit(u({ [index]: { value: xf }})) } /> );
+              editValue={ sub(edit, index, 'value') } /> );
 
     return  <div key="root">
       <button onClick={_ => edit(reverse)}>reverse</button>
@@ -55,7 +71,7 @@ class App extends Component {
         <h1><i>statics</i> reorder demo</h1>
         <Items
             items={data.items}
-            edit={ xf => edit(u({items: xf})) } />
+            edit={ sub(edit, 'items') } />
     </div>;
   }
 }
