@@ -32,11 +32,14 @@
     "immutable": "^3.7.3",
     "is-my-json-valid": "^2.12.0",
     "jjv": "^1.0.2",
+    "lodash": "^3.10.0",
     "node-libs-browser": "^0.5.2",
     "react": "0.13.x",
     "react-derive": "0.0.3",
     "rebound": "0.0.13",
-    "webpack": "^1.10.0"
+    "updeep": "^0.2.2",
+    "webpack": "^1.10.0",
+    "webpack-dev-server": "^1.10.1"
   },
   "peerDependencies": {},
   "dependencies": {},
