@@ -5,6 +5,9 @@ import u from 'updeep';
 const immutable = u({});
 const {elegant} = ElegantReact({debug: true});
 
+const sub = (edit, xfUpdates) => 
+  xf => edit(u(xfUpdates(xf)))
+  
 const initialState = immutable({
   items: [
     { name: 'one', value: 0 },
@@ -37,7 +40,7 @@ class Items extends Component {
       (item, index) =>
         <Item key={item.name}
               item={item}
-              editValue={ xf => edit(u({ [index]: { value: xf }})) } /> );
+              editValue={ sub(edit, xf => ({ [index]: { value: xf }})) } /> );
 
     return  <div key="root">
       <button onClick={_ => edit(reverse)}>reverse</button>
@@ -55,7 +58,7 @@ class App extends Component {
         <h1><i>statics</i> reorder demo</h1>
         <Items
             items={data.items}
-            edit={ xf => edit(u({items: xf})) } />
+            edit={ sub(edit, xf => ({items: xf})) } />
     </div>;
   }
 }
