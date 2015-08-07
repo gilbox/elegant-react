@@ -1,26 +1,13 @@
 import React, {Component} from 'react';
 import ElegantReact from 'elegant-react';
-import u from 'updeep';
+import u, {updateIn} from 'updeep';
 
 const immutable = u({});
 const {elegant} = ElegantReact({debug: true});
 
-const sub = (edit, ...path) => {
-  const updates = {};
-  const lastIndex = path.length - 1;
-  let subUpdates = updates;
+const sub = (edit, ...path) => 
+  transform => edit(updateIn(path, transform));
   
-  path.forEach((p,index) => {
-    if (index === lastIndex) return;
-    subUpdates = subUpdates[p] = {};
-  });
-
-  return xf => {
-    subUpdates[path[lastIndex]] = xf;
-    return edit(u(updates));
-  };
-}
-
 const initialState = immutable({
   items: [
     { name: 'one', value: 0 },

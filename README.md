@@ -165,21 +165,8 @@ just create your own subedit function and it should work.
   You can still use `u` in conjunction with `subedit` and benefit 
   from the expressiveness of both)
 
-        const subedit = (edit, ...path) => {
-          const updates = {};
-          const lastIndex = path.length - 1;
-          let subUpdates = updates;
-          
-          path.forEach((p,index) => {
-            if (index === lastIndex) return;
-            subUpdates = subUpdates[p] = {};
-          });
-          
-          return xf => {
-            subUpdates[path[lastIndex]] = xf;
-            return edit(u(updates));
-          };
-        }
+        const subedit = (edit, ...path) => 
+          transform => edit(updateIn(path, transform));
 
 ## Run the examples
 
