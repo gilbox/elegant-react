@@ -32,7 +32,7 @@ The `elegant-react` npm package provides:
   * Allows designated props to be treated as *static* so that changes to those
     props don't trigger render updates.
 
-- A simple [subedit](https://github.com/gilbox/elegant-react/blob/master/src/index.js#L4) function that looks like this:
+- A simple [subedit](https://github.com/gilbox/elegant-react/blob/master/src/index.js#L4) function that looks like this (if you're not using immutable-js, there are [alternatives to this `subedit` function](https://github.com/gilbox/elegant-react#dependencies)):
 
         const subedit = (edit, ...path) => transform =>
             edit(state => state.updateIn(path, transform));
