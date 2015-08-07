@@ -153,20 +153,25 @@ Although it's not a hard dependency, the provided `subedit` function is known
 to work with `immutable-js`. If you wish to use a different immutable lib,
 just create your own subedit function and it should work.
 
-- subedit for [mori](http://swannodette.github.io/mori/) *(untested)*
+- `sub`edit for [mori](http://swannodette.github.io/mori/) *(untested)*
 
-        const subedit = (edit, ...path) => transform =>
+        const sub = (edit, ...path) => transform =>
             edit(state => mori.updateIn(state, path, transform));
 
-- subedit for [updeep](https://github.com/aaronjensen/updeep) 
-  There is a demo in the `examples/reorder-items-updeep/` dir. 
-  
-  (note: this function doesn't replace the `u` function from updeep. 
-  You can still use `u` in conjunction with `subedit` and benefit 
-  from the expressiveness of both)
+- `sub`edit for [updeep](https://github.com/aaronjensen/updeep). 
+  (There is a demo in the `examples/reorder-items-updeep/` dir.)
 
-        const subedit = (edit, ...path) => 
-          transform => edit(updateIn(path, transform));
+        import u from 'updeep'
+        
+        const sub = (edit, ...path) => 
+          transform => edit(u.updateIn(path, transform));
+
+- `sub`edit for [icepick](https://github.com/aearly/icepick) *(untested)*
+
+        import i from 'icepick'
+        
+        const sub = (edit, ...path) => transform => 
+          edit(state => i.updateIn(state, path, transform))
 
 ## Run the examples
 
