@@ -34,9 +34,10 @@ The `elegant-react` npm package provides:
 
 - A simple [subedit](https://github.com/gilbox/elegant-react/blob/master/src/index.js#L4) function that looks like this (if you're not using immutable-js, there are [alternatives to this `subedit` function](https://github.com/gilbox/elegant-react#dependencies)):
 
-        const subedit = (edit, ...path) => transform =>
-            edit(state => state.updateIn(path, transform));
-
+  ```javascript
+  const subedit = (edit, ...path) => transform =>
+    edit(state => state.updateIn(path, transform));
+  ```
 
 ## about
 
@@ -51,19 +52,24 @@ in those two Medium articles.
 
 Install via npm
 
-    npm install elegant-react
-
+```bash
+  npm install elegant-react
+```
 
 ## Bringing it into your project
 
 Import it:
 
-    import {elegant, subedit} from 'elegant-react';
+```javascript
+  import {elegant, subedit} from 'elegant-react';
+```
 
 Or if you'd like to enable debug mode:
 
-    import ElegantReact from 'elegant-react';
-    const {elegant, subedit} = ElegantReact({debug: true});
+```javascript
+  import ElegantReact from 'elegant-react';
+  const {elegant, subedit} = ElegantReact({debug: true});
+```
 
 Note: the `subedit` function is also available as `sub`. It's a personal
 preference which you use. I like the way that `sub(edit, 'foo')` reads.
@@ -72,13 +78,16 @@ preference which you use. I like the way that `sub(edit, 'foo')` reads.
 
 Require it:
 
-    import {elegant, subedit} from 'elegant-react/native';
+```javascript
+  import {elegant, subedit} from 'elegant-react/native';
+```
 
 Or if you'd like to enable debug mode:
 
-    import ElegantReact from 'elegant-react/native';
-    const {elegant, subedit} = ElegantReact({debug: true});
-
+```javascript
+  import ElegantReact from 'elegant-react/native';
+  const {elegant, subedit} = ElegantReact({debug: true});
+```
 
 ## Using in codepen, jsbin, etc.
 
@@ -88,12 +97,15 @@ Add the script:
 
 This exposes the global object `ElegantReact`.
 
-    const {elegant, subedit} = ElegantReact;
+```javascript
+  const {elegant, subedit} = ElegantReact;
+```
 
 Or if you'd like to enable `debug` mode:
 
-    const {elegant, subedit} = ElegantReact({debug: true});
-
+```javascript
+  const {elegant, subedit} = ElegantReact({debug: true});
+```
 
 ## Usage
 
@@ -103,40 +115,43 @@ First, make sure you understand the `subedit` (aka `sub`) function described in
 Then add the `@elegant` decorator to your component, specifying which
 props are static.
 
-    const inc = n => n + 1;
+```javascript
+  const inc = n => n + 1;
 
-    @elegant({statics: ['editValue']})
-    class Item extends Component {
-      render() {
-        const {item,editValue} = this.props;
-        const onClick = _ => editValue(inc);
-        return <li onClick={ onClick }>
-          { item.get('name') } - { item.get('value') }
-        </li>
-      }
+  @elegant({statics: ['editValue']})
+  class Item extends Component {
+    render() {
+      const {item,editValue} = this.props;
+      const onClick = _ => editValue(inc);
+      return <li onClick={ onClick }>
+        { item.get('name') } - { item.get('value') }
+      </li>
     }
+  }
+```
 
 Now put that component to use:
 
-    const reverse = data => data.reverse();
+```javascript
+  const reverse = data => data.reverse();
+  @elegant({statics: ['edit']})
+  class Items extends Component {
+    render() {
+      const {items,edit} = this.props;
 
-    @elegant({statics: ['edit']})
-    class Items extends Component {
-      render() {
-        const {items,edit} = this.props;
+      const children = items.toArray().map(
+        (item, index) =>
+          <Item key={item.get('name')}
+                item={item}
+                editValue={sub(edit, index,'value')} /> );
 
-        const children = items.toArray().map(
-          (item, index) =>
-            <Item key={item.get('name')}
-                  item={item}
-                  editValue={sub(edit, index,'value')} /> );
-
-        return  <div key="root">
-          <button onClick={_ => edit(reverse)}>reverse</button>
-          <ul>{ children }</ul>
-        </div>;
-      }
+      return  <div key="root">
+        <button onClick={_ => edit(reverse)}>reverse</button>
+        <ul>{ children }</ul>
+      </div>;
     }
+  }
+```
 
 The rest of the source for this demo is [here](https://github.com/gilbox/elegant-react/blob/master/examples/reorder-items/app.js)
 and you can [see it in action](http://gilbox.github.io/elegant-react/examples/reorder-items/demo.html)
@@ -154,31 +169,36 @@ to work with `immutable-js`. If you wish to use a different immutable lib,
 just create your own subedit function and it should work.
 
 - `sub`edit for [mori](http://swannodette.github.io/mori/) *(untested)*
-
-        const sub = (edit, ...path) => transform =>
-            edit(state => mori.updateIn(state, path, transform));
+  ```javascript
+    const sub = (edit, ...path) => transform =>
+      edit(state => mori.updateIn(state, path, transform));
+  ```
 
 - `sub`edit for [updeep](https://github.com/aaronjensen/updeep). 
   (There is a demo in the `examples/reorder-items-updeep/` dir.)
-
-        import u from 'updeep'
-        
-        const sub = (edit, ...path) => 
-          transform => edit(u.updateIn(path, transform));
+  ```javascript
+    import u from 'updeep'
+    
+    const sub = (edit, ...path) => 
+      transform => edit(u.updateIn(path, transform));
+  ```
 
 - `sub`edit for [icepick](https://github.com/aearly/icepick) *(untested)*
-
-        import i from 'icepick'
-        
-        const sub = (edit, ...path) => transform => 
-          edit(state => i.updateIn(state, path, transform))
+  ```javascript
+    import i from 'icepick'
+    
+    const sub = (edit, ...path) => transform => 
+      edit(state => i.updateIn(state, path, transform))
+  ```
 
 ## Run the examples
 
 Clone this repo, then:
 
-    npm install
-    npm run examples
+```bash
+  npm install
+  npm run examples
+```
 
 ... and navigate to [http://localhost:8080/webpack-dev-server/](http://localhost:8080/webpack-dev-server/)
 
